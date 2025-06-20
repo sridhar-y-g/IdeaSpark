@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -5,14 +6,16 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Logo } from './Logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlusCircle, LogIn, LogOut, UserCircle, Menu, X } from 'lucide-react';
+import { PlusCircle, LogIn, LogOut, Menu } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation'; // Moved useRouter import here
+import { cn } from "@/lib/utils"; // Consolidated imports
 
 export function Navbar() {
   const { user, logout, loading } = useAuth();
+  const router = useRouter(); // Initialize router
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -152,7 +155,3 @@ export function Navbar() {
     </header>
   );
 }
-
-// Helper to apply cn function, as it cannot be used directly in template strings in attributes
-import { cn } from "@/lib/utils";
-import { useRouter } from 'next/navigation';
