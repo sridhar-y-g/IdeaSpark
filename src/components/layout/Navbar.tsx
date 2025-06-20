@@ -12,6 +12,7 @@ import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from "@/lib/utils"; 
+import { ThemeToggleButton } from './ThemeToggleButton'; // Added import
 
 export function Navbar() {
   const { user, logout, loading } = useAuth();
@@ -64,7 +65,10 @@ export function Navbar() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-8">
           <Logo />
-          <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div>
+          <div className="flex items-center space-x-2">
+            <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div>
+            <div className="h-10 w-10 rounded-md bg-muted animate-pulse"></div> {/* Placeholder for theme toggle */}
+          </div>
         </div>
       </header>
     );
@@ -78,6 +82,7 @@ export function Navbar() {
           {renderNavLinks()}
         </nav>
         <div className="flex items-center space-x-3">
+          <ThemeToggleButton /> {/* Added theme toggle button */}
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -170,3 +175,4 @@ export function Navbar() {
     </header>
   );
 }
+
