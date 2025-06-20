@@ -1,3 +1,4 @@
+
 import type { Idea } from './types';
 import { IdeaCategory } from './types';
 
@@ -18,7 +19,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
     upvotes: 152,
-    coverImageUrl: 'https://placehold.co/600x400.png?text=Garden+AI',
+    coverImageUrl: 'https://placehold.co/600x400.png',
+    // data-ai-hint for coverImageUrl should be handled in the component where Image is used
   },
   {
     id: '2',
@@ -31,7 +33,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(), // 1 day ago
     upvotes: 230,
-    coverImageUrl: 'https://placehold.co/600x400.png?text=Kids+Story',
+    coverImageUrl: 'https://placehold.co/600x400.png',
   },
   {
     id: '3',
@@ -44,7 +46,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_3.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days ago
     upvotes: 98,
-    coverImageUrl: 'https://placehold.co/600x400.png?text=Urban+Commute',
+    coverImageUrl: 'https://placehold.co/600x400.png',
   },
   {
     id: '4',
@@ -57,7 +59,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
     upvotes: 188,
-    coverImageUrl: 'https://placehold.co/600x400.png?text=VR+Museum',
+    coverImageUrl: 'https://placehold.co/600x400.png',
   },
   {
     id: '5',
@@ -70,6 +72,47 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
     upvotes: 305,
-    coverImageUrl: 'https://placehold.co/600x400.png?text=Wellness+AI',
+    coverImageUrl: 'https://placehold.co/600x400.png',
+  },
+  {
+    id: '6',
+    title: 'Community Skill-Share Network',
+    description: 'A hyperlocal platform connecting neighbors for skill exchange – learn to bake from Susan down the street, or teach someone basic coding. Fosters community and lifelong learning.',
+    tags: ['Community', 'SkillShare', 'Local', 'Education', 'Networking'],
+    category: IdeaCategory.SOCIAL_IMPACT,
+    userId: MOCK_USER_1.id,
+    userName: MOCK_USER_1.name,
+    userAvatarUrl: MOCK_USER_1.avatarUrl,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(), // 6 days ago
+    upvotes: 120,
+    coverImageUrl: 'https://placehold.co/600x400.png',
+  },
+  {
+    id: '7',
+    title: 'AI-Driven Ethical Fashion Advisor',
+    description: 'An app that scans clothing brands and items to provide a score on their ethical and sustainability practices. Helps consumers make informed choices to support responsible brands.',
+    tags: ['EthicalFashion', 'Sustainability', 'AI', 'ConsumerTech', 'App'],
+    category: IdeaCategory.ENVIRONMENT_SUSTAINABILITY,
+    userId: MOCK_USER_2.id,
+    userName: MOCK_USER_2.name,
+    userAvatarUrl: MOCK_USER_2.avatarUrl,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(), // 10 days ago
+    upvotes: 205,
+    coverImageUrl: 'https://placehold.co/600x400.png',
+  },
+  {
+    id: '8',
+    title: 'Gamified Language Learning for Niche Languages',
+    description: 'A mobile game that makes learning less common or endangered languages fun and accessible. Uses storytelling, cultural immersion techniques, and community challenges.',
+    tags: ['LanguageLearning', 'Gamification', 'Education', 'Culture', 'MobileGame'],
+    category: IdeaCategory.EDUCATION_LEARNING,
+    userId: MOCK_USER_3.id,
+    userName: MOCK_USER_3.name,
+    userAvatarUrl: MOCK_USER_3.avatarUrl,
+    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(), // 15 days ago
+    upvotes: 165,
+    coverImageUrl: 'https://placehold.co/600x400.png',
   },
 ];
+
+    
