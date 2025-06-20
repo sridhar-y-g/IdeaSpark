@@ -6,7 +6,7 @@ import type { Idea, ChatMessage } from '@/lib/types';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
+// ScrollArea removed
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Send, Bot, User, MessageSquare } from 'lucide-react';
 import { ideaChatbotAction } from '@/lib/actions';
@@ -23,7 +23,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null); // Changed ref name
 
   useEffect(() => {
     if (isOpen) {
@@ -40,13 +40,11 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
   }, [isOpen, idea.title]);
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]') as HTMLElement | null;
-      if (viewport) {
-        setTimeout(() => {
-          viewport.scrollTop = viewport.scrollHeight;
-        }, 0);
-      }
+    if (messagesContainerRef.current) {
+      // Scroll to the bottom of the messages container
+      setTimeout(() => {
+        messagesContainerRef.current!.scrollTop = messagesContainerRef.current!.scrollHeight;
+      }, 0);
     }
   }, [messages, isLoading]);
 
@@ -104,8 +102,12 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           </div>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow min-h-0" ref={scrollAreaRef}> {/* Removed border-b from here */}
-          <div className="px-6 py-4 space-y-6"> 
+        {/* Main scrollable chat content area */}
+        <div 
+          ref={messagesContainerRef} 
+          className="flex-1 min-h-0 overflow-y-auto" // flex-1 takes available space, min-h-0 for proper flex scroll, overflow-y-auto for scrolling
+        >
+          <div className="px-6 py-4 space-y-6">  {/* Padding for message content */}
             {messages.map(msg => (
               <div key={msg.id} className={cn("flex items-end space-x-3", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
                 {msg.sender === 'bot' && (
@@ -129,8 +131,8 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
               </div>
             ))}
              {isLoading && (
-              <div className="flex items-end space-x-3 justify-start pl-11"> {/* Aligned with bot messages approximately */}
-                <Avatar className="h-8 w-8 border-2 border-primary invisible"> {/* Placeholder for alignment */}
+              <div className="flex items-end space-x-3 justify-start pl-11"> 
+                <Avatar className="h-8 w-8 border-2 border-primary invisible"> 
                     <AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback>
                 </Avatar>
                 <div className="bg-muted text-muted-foreground rounded-lg px-4 py-3 shadow flex items-center">
@@ -139,7 +141,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         <DialogFooter className="p-6 border-t"> 
           <form
