@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { IdeaCategory } from '@/lib/types';
-import { Search, RotateCcw } from 'lucide-react'; // Removed Filter icon, added RotateCcw
+import { Search, RotateCcw } from 'lucide-react';
 
 export interface Filters {
   searchTerm: string;
@@ -17,7 +17,7 @@ export interface Filters {
 interface IdeaFiltersProps {
   filters: Filters;
   onFilterChange: (newFilters: Filters) => void;
-  onResetFilters: () => void; // New prop for reset
+  onResetFilters: () => void;
 }
 
 export function IdeaFilters({ filters, onFilterChange, onResetFilters }: IdeaFiltersProps) {

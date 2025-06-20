@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email: string;
@@ -6,14 +7,15 @@ export interface User {
 }
 
 export enum IdeaCategory {
-  TECHNOLOGY = "Technology",
-  ART_DESIGN = "Art & Design",
-  SOCIAL_IMPACT = "Social Impact",
-  BUSINESS_FINANCE = "Business & Finance",
+  SOFTWARE = "Software",
+  HARDWARE = "Hardware",
+  FOOD_BEVERAGE = "Food & Beverage",
+  NONPROFIT_SOCIAL = "Nonprofit & Social Impact",
+  CREATIVE_ARTS = "Creative & Arts",
   EDUCATION_LEARNING = "Education & Learning",
-  LIFESTYLE_WELLBEING = "Lifestyle & Wellbeing",
-  ENVIRONMENT_SUSTAINABILITY = "Environment & Sustainability",
-  SCIENCE_RESEARCH = "Science & Research",
+  HEALTH_WELLNESS = "Health & Wellness",
+  SUSTAINABILITY_ENVIRONMENT = "Sustainability & Environment",
+  BUSINESS_FINANCE = "Business & Finance",
   OTHER = "Other",
 }
 

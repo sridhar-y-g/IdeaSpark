@@ -1,8 +1,8 @@
 
 "use server";
 
-import type { Idea } from './types'; // Keep existing Idea import
-import { IdeaCategory } from './types'; // Add this import
+import type { Idea } from './types';
+import { IdeaCategory } from './types';
 import { z } from 'zod';
 import { suggestTags as aiSuggestTags, type SuggestTagsInput, type SuggestTagsOutput } from '@/ai/flows/suggest-tags';
 import { ideaChatbot as aiIdeaChatbot, type IdeaChatbotInput, type IdeaChatbotOutput } from '@/ai/flows/idea-chatbot';
@@ -13,7 +13,7 @@ const ideaFormSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters").max(100),
   description: z.string().min(20, "Description must be at least 20 characters").max(5000),
   tags: z.array(z.string().min(1).max(30)).min(1, "At least one tag is required").max(10, "Maximum of 10 tags"),
-  category: z.nativeEnum(IdeaCategory, { // This line requires IdeaCategory to be defined
+  category: z.nativeEnum(IdeaCategory, {
     errorMap: () => ({ message: "Please select a valid category." }),
   }),
   userId: z.string(),
