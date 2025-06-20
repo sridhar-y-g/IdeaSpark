@@ -95,16 +95,16 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] p-0 flex flex-col max-h-[90vh]">
         <DialogHeader className="p-6 pb-4 border-b">
-          <div className="flex items-start space-x-3"> {/* Changed items-center to items-start */}
-             <MessageSquare className="h-8 w-8 text-primary flex-shrink-0"/> {/* Added flex-shrink-0 */}
-            <div className="flex-grow min-w-0"> {/* Added flex-grow and min-w-0 for text container */}
-                <DialogTitle className="font-headline text-2xl break-words">Chat about: {idea.title}</DialogTitle> {/* Added break-words */}
-                <DialogDescription className="break-words">Ask questions and get insights from our AI assistant.</DialogDescription> {/* Added break-words */}
+          <div className="flex items-start space-x-3">
+             <MessageSquare className="h-8 w-8 text-primary flex-shrink-0"/>
+            <div className="flex-grow min-w-0">
+                <DialogTitle className="font-headline text-2xl break-words">Chat about: {idea.title}</DialogTitle>
+                <DialogDescription className="break-words">Ask questions and get insights from our AI assistant.</DialogDescription>
             </div>
           </div>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow p-6" ref={scrollAreaRef}>
+        <ScrollArea className="flex-grow p-6 min-h-0" ref={scrollAreaRef}> {/* Added min-h-0 here */}
           <div className="space-y-6 pr-4"> 
             {messages.map(msg => (
               <div key={msg.id} className={cn("flex items-end space-x-3", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
