@@ -53,19 +53,19 @@ h1, h2, h3, h4, h5, h6 {
     --sidebar-ring: 183 100% 74%;
   }
   .dark {
-    --background: 240 10% 10%; /* Dark Blue/Purple - This will be overridden for body by the animation */
-    --foreground: 240 10% 90%; /* Light Gray */
+    --background: 240 10% 10%; 
+    --foreground: 240 10% 90%; 
     --card: 240 10% 15%;
     --card-foreground: 240 10% 90%;
     --popover: 240 10% 15%;
     --popover-foreground: 240 10% 90%;
-    --primary: 300 80% 60%; /* Lighter Vibrant Purple */
+    --primary: 300 80% 60%; 
     --primary-foreground: 300 10% 10%; 
     --secondary: 300 30% 30%; 
     --secondary-foreground: 300 80% 80%;
     --muted: 240 10% 20%;
     --muted-foreground: 240 10% 60%;
-    --accent: 183 80% 65%; /* Lighter Electric Blue */
+    --accent: 183 80% 65%; 
     --accent-foreground: 183 10% 10%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 98%;
@@ -92,25 +92,30 @@ h1, h2, h3, h4, h5, h6 {
   * {
     @apply border-border;
   }
-  body { /* Default (Light mode) body styles */
-    @apply bg-background text-foreground;
-    /* font-family is inherited from global body style */
+  body { 
+    @apply bg-background text-foreground font-bold; /* Added font-bold */
   }
 
-  /* Animated space background for .dark body */
   .dark body {
-    color: hsl(var(--foreground)); /* Ensures text color uses dark theme's --foreground */
-    /* font-family is inherited from global body style */
+    color: hsl(var(--foreground)); 
+    /* The animated space background from previous step might be overridden by the new .large-header logic if it's fixed full screen.
+       Keeping this for now, but the new canvas background will take precedence visually if it covers the body.
+       If the new .large-header is *not* fixed and full-screen, this animated body bg remains.
+       Given the user's new CSS, .large-header is fixed and full-screen, so this body animation is superseded.
+       I will comment it out to prevent conflict and use the new #111 background specified.
+    */
+    /*
     background: linear-gradient(
       -45deg, 
-      hsl(240, 25%, 6%),  /* Deep dark blue */
-      hsl(260, 30%, 10%), /* Dark purple */
-      hsl(250, 20%, 5%),  /* Even darker core */
-      hsl(270, 28%, 9%)   /* Dark violet/blue */
+      hsl(240, 25%, 6%),
+      hsl(260, 30%, 10%),
+      hsl(250, 20%, 5%),
+      hsl(270, 28%, 9%)
     );
     background-size: 400% 400%;
     animation: space-bg-animation 35s ease infinite;
-    min-height: 100vh; /* Ensure animation covers full viewport height */
+    */
+    min-height: 100vh;
   }
 }
 
@@ -153,9 +158,75 @@ h1, h2, h3, h4, h5, h6 {
   transform: scale(1.03);
 }
 
-/* Staggered animation for feed items */
 .feed-item-staggered {
   opacity: 0;
   transform: translateY(20px);
   animation: slideInUp 0.5s ease-out forwards;
+}
+
+/* Styles for the new animated background based on user's request */
+.large-header-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1; /* Behind main content */
+  overflow: hidden;
+  display: none; /* Hidden by default, shown in dark mode */
+}
+
+.dark .large-header-container.demo { /* .demo class is on the container */
+  display: block; /* Show in dark mode if .demo is applied */
+}
+
+.large-header-container .large-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #111; /* Base background color */
+  background-size: cover;
+  background-position: center center;
+}
+
+.dark .large-header-container.demo .large-header {
+  background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/499416/demo-bg.jpg");
+}
+
+.large-header-container #demo-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.main-title { /* User's class name */
+   position: absolute;
+   margin: 0;
+   padding: 0;
+   color: #F9F1E9;
+   text-align: center;
+   top: 50%;
+   left: 50%;
+   -webkit-transform: translate3d(-40%, -30%, 0); /* As per user's specific transform */
+   transform: translate3d(-40%, -30%, 0); /* As per user's specific transform */
+   z-index: 1; /* Above canvas within its container */
+   /* Default font styles will be inherited, .dark .main-title provides specifics */
+}
+
+.dark .main-title { /* Styles specific to .demo .main-title from user, applied in dark mode */
+   text-transform: uppercase;
+   font-size: 4.2em; /* Using a larger base size */
+   letter-spacing: 0.1em; /* Common letter spacing for large titles */
+}
+
+.main-title .thin {
+   font-weight: 200;
+}
+
+@media only screen and (max-width: 768px) {
+   .dark .main-title {
+      font-size: 3em; /* Adjust size for smaller screens */
+   }
 }
