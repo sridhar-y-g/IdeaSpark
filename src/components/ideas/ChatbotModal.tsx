@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -39,14 +40,17 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
   }, [isOpen, idea.title]);
 
   useEffect(() => {
-    // Scroll to bottom when new messages are added
+    // Scroll to bottom when new messages are added or loading state changes
     if (scrollAreaRef.current) {
-      const scrollViewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]');
-      if (scrollViewport) {
-        scrollViewport.scrollTop = scrollViewport.scrollHeight;
+      const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]') as HTMLElement | null;
+      if (viewport) {
+        // Use setTimeout to ensure scrollHeight is updated after new messages are rendered
+        setTimeout(() => {
+          viewport.scrollTop = viewport.scrollHeight;
+        }, 0);
       }
     }
-  }, [messages]);
+  }, [messages, isLoading]); // Added isLoading as a dependency
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
