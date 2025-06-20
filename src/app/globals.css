@@ -5,7 +5,7 @@
 
 body {
   font-family: var(--font-body), serif;
-  overflow: hidden; /* Added from user's CSS for new background */
+  /* overflow: hidden; /* Removed to allow page scrolling */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -93,7 +93,7 @@ h1, h2, h3, h4, h5, h6 {
   }
   body { 
     @apply bg-background text-foreground font-bold; 
-    /* overflow: hidden; is now at the top level body style */
+    /* overflow: hidden; is now at the top level body style (and removed) */
   }
 
   .dark body {
