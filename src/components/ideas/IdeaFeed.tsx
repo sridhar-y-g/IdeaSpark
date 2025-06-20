@@ -46,17 +46,12 @@ export function IdeaFeed() {
         try {
             const ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
             if (Array.isArray(ideasFromStorage)) {
-                 // Combine mock ideas and stored ideas. Prioritize stored ones.
-                 // Filter out mock ideas that are already present (by ID) in storage.
                  const storedIdeaIds = new Set(ideasFromStorage.map(i => i.id));
                  const uniqueMockIdeas = initialIdeas.filter(mi => !storedIdeaIds.has(mi.id));
                  ideasToLoad = [...ideasFromStorage, ...uniqueMockIdeas];
             }
         } catch (e) {
             console.warn("Could not parse ideas from localStorage, falling back to initial mock data.", e);
-            // If parsing fails or it's not an array, merge mock ideas carefully
-            const mockIdeaIds = new Set(initialIdeas.map(i => i.id));
-            // Assuming mockIdeas is the base if localStorage is corrupt
             ideasToLoad = initialIdeas; 
         }
     }
@@ -184,13 +179,19 @@ export function IdeaFeed() {
            <FileQuestion className="mx-auto h-28 w-28 text-primary/30 mb-8" />
           <h3 className="text-3xl font-headline mb-3 text-foreground">No Spark Here... Yet!</h3>
           <p className="text-lg mb-6 max-w-md mx-auto">
-              Why not be the first to share your brilliant concept and light up the feed?
+            {filters.searchTerm ? "No ideas match your current search. Try adjusting your filters or search term." : "Why not be the first to share your brilliant concept and light up the feed?"}
           </p>
-          <Button asChild size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
-            <Link href="/submit-idea">
-                <Sparkles className="mr-2 h-5 w-5" /> Submit Your Idea
-            </Link>
-          </Button>
+           {filters.searchTerm ? (
+            <Button onClick={resetFilters} size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+              <RotateCcw className="mr-2 h-5 w-5" /> Reset Search & Filters
+            </Button>
+           ) : (
+            <Button asChild size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/submit-idea">
+                  <Sparkles className="mr-2 h-5 w-5" /> Submit Your Idea
+              </Link>
+            </Button>
+           )}
         </div>
       )}
 
