@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,8 +22,8 @@ import { IdeaCategory } from "@/lib/types";
 import type { User } from "@/lib/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { useFormState, useFormStatus } from 'react-dom';
+import { useEffect, useState, useActionState } from "react"; // Changed from 'react-dom' for useFormState
+import { useFormStatus } from 'react-dom'; // useFormStatus remains in react-dom
 import { submitIdeaAction, type SubmitIdeaState } from '@/lib/actions';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -68,7 +69,7 @@ export function IdeaForm() {
     },
   });
   
-  const [formState, formAction] = useFormState<SubmitIdeaState, FormData>(submitIdeaAction, { success: false });
+  const [formState, formAction] = useActionState<SubmitIdeaState, FormData>(submitIdeaAction, { success: false }); // Renamed useFormState to useActionState
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -236,3 +237,4 @@ export function IdeaForm() {
     </Card>
   );
 }
+
