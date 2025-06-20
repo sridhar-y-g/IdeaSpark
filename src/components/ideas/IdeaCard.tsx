@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, MessageCircle, ExternalLink, Trash2, Bookmark } from 'lucide-react';
+import { ThumbsUp, MessageCircle, ExternalLink, Trash2, Bookmark, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import React, { useState, useEffect } from 'react';
@@ -23,9 +23,10 @@ interface IdeaCardProps {
   onDeleteRequest: (ideaId: string) => void;
   style?: React.CSSProperties;
   className?: string;
+  isActiveTrending?: boolean;
 }
 
-export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
+export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className, isActiveTrending }: IdeaCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -47,9 +48,13 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
     }
   }, [user, idea]);
 
+  useEffect(() => {
+    setCurrentUpvotes(idea.upvotes);
+  }, [idea.upvotes]);
+
   const handleUpvote = () => {
     onUpvote(idea.id);
-    setCurrentUpvotes(prev => prev + 1);
+    // setCurrentUpvotes is now updated via useEffect listening to idea.upvotes prop
   };
 
   const handleToggleSave = () => {
@@ -78,12 +83,41 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
     setIsSaved(!alreadySaved);
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: idea.title,
+      text: `Check out this idea on IdeaSpark: ${idea.title}`,
+      url: `${window.location.origin}/ideas/${idea.id}`,
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        // Most browsers don't provide success feedback for navigator.share
+        // You might want a generic "Shared!" or no toast here.
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        await navigator.clipboard.writeText(shareData.url);
+        toast({ title: "Link Copied!", description: "Idea link copied to clipboard." });
+      }
+    } catch (err) {
+      console.error('Error sharing idea:', err);
+      // Only show error if it's not an AbortError (user cancellation)
+      if ((err as DOMException).name !== 'AbortError') {
+        toast({ title: "Share Failed", description: "Could not share the idea at this time.", variant: "destructive" });
+      }
+    }
+  };
+
   const timeAgo = formatDistanceToNow(new Date(idea.createdAt), { addSuffix: true });
 
   return (
     <>
       <Card
-        className={cn("flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group", className)}
+        className={cn(
+            "flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group",
+            isActiveTrending ? 'trending-active-card' : '',
+            className
+          )}
         style={style}
       >
         {idea.coverImageUrl && (
@@ -93,8 +127,8 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               alt={idea.title}
               fill
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
-              data-ai-hint="idea concept"
-              priority={index < 3}
+              data-ai-hint={idea.dataAiHint || "idea concept"}
+              priority={index < 3} 
             />
           </div>
         )}
@@ -168,6 +202,15 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
                 <Bookmark className={cn("h-5 w-5", isSaved && "fill-primary")} />
               </Button>
             )}
+             <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleShare}
+              className="text-muted-foreground hover:text-primary"
+              aria-label="Share idea"
+            >
+              <Share2 className="h-5 w-5" />
+            </Button>
             <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group">
               <MessageCircle className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" />
               <span className="hidden sm:inline">Chat</span>

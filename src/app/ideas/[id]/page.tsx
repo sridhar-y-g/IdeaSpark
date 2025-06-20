@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ArrowLeft, Download, Bookmark } from 'lucide-react';
+import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ArrowLeft, Download, Bookmark, Share2 } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { LoadingSpinner } from '@/components/core/LoadingSpinner';
@@ -48,24 +48,20 @@ export default function IdeaDetailPage() {
       
       let finalIdea: Idea | null = null;
 
-      if (localIdeaInstance) { // Idea exists in local storage
-        if (mockIdeaInstance) { // It's a mock idea, also in local storage
+      if (localIdeaInstance) { 
+        if (mockIdeaInstance) { 
           finalIdea = {
-            ...mockIdeaInstance, // Base details from current mock data (includes colorful URL & dataAiHint)
-            upvotes: localIdeaInstance.upvotes, // User-specific data from local storage
-            // Preserve other fields from local storage that might have been user-modified if necessary,
-            // for mock ideas, these are typically static from mockData or derived,
-            // but upvotes are a key dynamic field.
-             // Ensure all fields from Idea type are covered
+            ...mockIdeaInstance, 
+            upvotes: localIdeaInstance.upvotes, 
             userId: localIdeaInstance.userId, 
             userName: localIdeaInstance.userName, 
             userAvatarUrl: localIdeaInstance.userAvatarUrl, 
-            createdAt: localIdeaInstance.createdAt, // Use local storage createdAt for consistency
+            createdAt: localIdeaInstance.createdAt, 
           };
-        } else { // It's a user-created idea, only in local storage
+        } else { 
           finalIdea = localIdeaInstance;
         }
-      } else if (mockIdeaInstance) { // Idea not in local storage, but is a known mock idea
+      } else if (mockIdeaInstance) { 
         finalIdea = mockIdeaInstance;
       }
       
@@ -123,12 +119,10 @@ export default function IdeaDetailPage() {
     if (ideaIndex !== -1) {
       ideasFromStorage[ideaIndex].upvotes = newUpvotes;
     } else {
-      // If idea from mockData (and not yet in LS), add it to localStorage with the new upvote count
-      // and ensure it uses the most up-to-date mockIdea details (like coverImageUrl)
       const mockIdeaEquivalent = mockIdeas.find(mi => mi.id === idea.id);
       if (mockIdeaEquivalent) {
         ideasFromStorage.push({ ...mockIdeaEquivalent, upvotes: newUpvotes });
-      } else if(idea) { // Should not happen if idea is set
+      } else if(idea) {
          ideasFromStorage.push({ ...idea, upvotes: newUpvotes });
       }
     }
@@ -193,6 +187,28 @@ ${tagsList}
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
+  };
+
+  const handleShare = async () => {
+    if (!idea) return;
+    const shareData = {
+      title: idea.title,
+      text: `Check out this idea on IdeaSpark: ${idea.title}`,
+      url: window.location.href, // Use current URL for detail page
+    };
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(shareData.url);
+        toast({ title: "Link Copied!", description: "Idea link copied to clipboard." });
+      }
+    } catch (err) {
+      console.error('Error sharing idea:', err);
+       if ((err as DOMException).name !== 'AbortError') {
+        toast({ title: "Share Failed", description: "Could not share the idea at this time.", variant: "destructive" });
+      }
+    }
   };
 
 
@@ -282,6 +298,9 @@ ${tagsList}
                   {isSaved ? 'Saved' : 'Save'}
                 </Button>
               )}
+              <Button variant="outline" onClick={handleShare} className="text-lg px-3 py-2">
+                <Share2 className="h-5 w-5 mr-2" /> Share
+              </Button>
             </div>
             <Button variant="default" onClick={() => setIsChatbotOpen(true)} className="text-lg px-6 py-3">
               <MessageCircle className="h-6 w-6 mr-2" /> Chat
