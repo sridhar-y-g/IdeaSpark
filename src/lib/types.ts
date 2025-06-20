@@ -31,6 +31,7 @@ export interface Idea {
   createdAt: string; // ISO string date
   upvotes: number;
   coverImageUrl?: string; // Optional cover image for the idea
+  dataAiHint?: string; // Optional hint for AI image search for cover images
 }
 
 export interface ChatMessage {

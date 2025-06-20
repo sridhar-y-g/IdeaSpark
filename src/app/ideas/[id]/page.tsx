@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ExternalLink, ArrowLeft, Download, Bookmark } from 'lucide-react';
+import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ArrowLeft, Download, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { LoadingSpinner } from '@/components/core/LoadingSpinner';
@@ -34,25 +34,49 @@ export default function IdeaDetailPage() {
   useEffect(() => {
     if (ideaId) {
       const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
-      let ideasFromStorage: Idea[] = [];
+      let localIdeas: Idea[] = [];
       if (storedIdeasRaw) {
         try {
-          ideasFromStorage = JSON.parse(storedIdeasRaw);
+          localIdeas = JSON.parse(storedIdeasRaw);
         } catch (e) {
           console.error("Error parsing ideas from localStorage", e);
-          ideasFromStorage = [];
         }
       }
       
-      const allAvailableIdeas = [...ideasFromStorage, ...mockIdeas.filter(mi => !ideasFromStorage.find(si => si.id === mi.id))];
-      const foundIdea = allAvailableIdeas.find(i => i.id === ideaId);
+      const localIdeaInstance = localIdeas.find(i => i.id === ideaId);
+      const mockIdeaInstance = mockIdeas.find(i => i.id === ideaId);
       
-      if (foundIdea) {
-        setIdea(foundIdea);
-        setCurrentUpvotes(foundIdea.upvotes);
+      let finalIdea: Idea | null = null;
+
+      if (localIdeaInstance) { // Idea exists in local storage
+        if (mockIdeaInstance) { // It's a mock idea, also in local storage
+          finalIdea = {
+            ...mockIdeaInstance, // Base details from current mock data (includes colorful URL & dataAiHint)
+            upvotes: localIdeaInstance.upvotes, // User-specific data from local storage
+            // Preserve other fields from local storage that might have been user-modified if necessary,
+            // for mock ideas, these are typically static from mockData or derived,
+            // but upvotes are a key dynamic field.
+             // Ensure all fields from Idea type are covered
+            userId: localIdeaInstance.userId, 
+            userName: localIdeaInstance.userName, 
+            userAvatarUrl: localIdeaInstance.userAvatarUrl, 
+            createdAt: localIdeaInstance.createdAt, // Use local storage createdAt for consistency
+          };
+        } else { // It's a user-created idea, only in local storage
+          finalIdea = localIdeaInstance;
+        }
+      } else if (mockIdeaInstance) { // Idea not in local storage, but is a known mock idea
+        finalIdea = mockIdeaInstance;
+      }
+      
+      if (finalIdea) {
+        setIdea({
+            ...finalIdea,
+            createdAt: typeof finalIdea.createdAt === 'string' ? finalIdea.createdAt : new Date(finalIdea.createdAt).toISOString(),
+        });
+        setCurrentUpvotes(finalIdea.upvotes);
       } else {
         console.error("Idea not found");
-        // Optionally, redirect or show a 'not found' message more prominently
       }
       setIsLoading(false);
     }
@@ -99,10 +123,13 @@ export default function IdeaDetailPage() {
     if (ideaIndex !== -1) {
       ideasFromStorage[ideaIndex].upvotes = newUpvotes;
     } else {
-      // If idea from mockData, add it to localStorage with the new upvote count
-      const ideaToUpdate = mockIdeas.find(mi => mi.id === idea.id);
-      if (ideaToUpdate) {
-        ideasFromStorage.push({ ...ideaToUpdate, upvotes: newUpvotes });
+      // If idea from mockData (and not yet in LS), add it to localStorage with the new upvote count
+      // and ensure it uses the most up-to-date mockIdea details (like coverImageUrl)
+      const mockIdeaEquivalent = mockIdeas.find(mi => mi.id === idea.id);
+      if (mockIdeaEquivalent) {
+        ideasFromStorage.push({ ...mockIdeaEquivalent, upvotes: newUpvotes });
+      } else if(idea) { // Should not happen if idea is set
+         ideasFromStorage.push({ ...idea, upvotes: newUpvotes });
       }
     }
     localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasFromStorage));
@@ -192,7 +219,7 @@ ${tagsList}
                 layout="fill"
                 objectFit="cover"
                 priority
-                data-ai-hint="concept illustration"
+                data-ai-hint={idea.dataAiHint || "concept illustration"}
               />
             </div>
           )}
@@ -272,4 +299,3 @@ ${tagsList}
     </MainLayout>
   );
 }
-

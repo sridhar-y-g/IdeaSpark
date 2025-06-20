@@ -4,7 +4,7 @@ import { IdeaCategory } from './types';
 
 const MOCK_USER_1 = { id: 'user1', name: 'Alice Wonderland', avatarUrl: 'https://placehold.co/100x100/E91E63/FFFFFF.png?text=A' };
 const MOCK_USER_2 = { id: 'user2', name: 'Bob The Builder', avatarUrl: 'https://placehold.co/100x100/4CAF50/FFFFFF.png?text=B' };
-const MOCK_USER_3 = { id: 'user3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/100x100/FFC107/FFFFFF.png?text=C' };
+const MOCK_USER_3 = { id: 'user3', name: 'Charlie Chaplin', avatarUrl: 'https://placehold.co/100x100/FFC107/333333.png?text=C' };
 
 
 export const mockIdeas: Idea[] = [
@@ -103,7 +103,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(), 
     upvotes: 205,
-    coverImageUrl: 'https://placehold.co/600x400/F1C40F/333333.png?text=EthiWear', // Yellow with dark text
+    coverImageUrl: 'https://placehold.co/600x400/F1C40F/333333.png?text=EthiWear',
     dataAiHint: "fashion ethics"
   },
   {
@@ -121,5 +121,3 @@ export const mockIdeas: Idea[] = [
     dataAiHint: "language game"
   },
 ];
-
-    

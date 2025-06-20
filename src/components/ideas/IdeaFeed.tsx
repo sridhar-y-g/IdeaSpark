@@ -40,23 +40,55 @@ export function IdeaFeed() {
 
   useEffect(() => {
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
-    let ideasToLoad = initialIdeas;
-
+    let localIdeas: Idea[] = [];
     if (storedIdeasRaw) {
-        try {
-            const ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
-            if (Array.isArray(ideasFromStorage)) {
-                 const storedIdeaIds = new Set(ideasFromStorage.map(i => i.id));
-                 const uniqueMockIdeas = initialIdeas.filter(mi => !storedIdeaIds.has(mi.id));
-                 ideasToLoad = [...ideasFromStorage, ...uniqueMockIdeas];
-            }
-        } catch (e) {
-            console.warn("Could not parse ideas from localStorage, falling back to initial mock data.", e);
-            ideasToLoad = initialIdeas; 
-        }
+      try {
+        localIdeas = JSON.parse(storedIdeasRaw);
+      } catch (e) {
+        console.warn("Could not parse ideas from localStorage, will use initial mock data.", e);
+        localIdeas = []; // Fallback to empty if parsing fails
+      }
     }
     
-    const processedIdeas = ideasToLoad.map((idea: Idea) => ({
+    const localIdeasMap = new Map(localIdeas.map(idea => [idea.id, idea]));
+    let wasLocalStorageUpdated = false;
+
+    // Start with fresh mock ideas, then update with local storage data if it exists
+    // and refresh coverImageUrl from mockData if it's a mock idea.
+    let combinedIdeas = initialIdeas.map(mockIdea => {
+      const localIdea = localIdeasMap.get(mockIdea.id);
+      if (localIdea) {
+        // Preserve user-specific data from local storage, but use coverImageUrl and dataAiHint from current mockData
+        if (localIdea.coverImageUrl !== mockIdea.coverImageUrl || localIdea.dataAiHint !== mockIdea.dataAiHint) {
+            wasLocalStorageUpdated = true;
+        }
+        return {
+          ...mockIdea, // Takes title, desc, category, tags, coverImageUrl, dataAiHint etc. from current mockData
+          upvotes: localIdea.upvotes, // Preserves upvotes from local storage
+          userId: localIdea.userId, // Preserves original userId, etc.
+          userName: localIdea.userName,
+          userAvatarUrl: localIdea.userAvatarUrl,
+          createdAt: localIdea.createdAt, // Preserve original creation date from local storage if available and valid
+        };
+      }
+      return mockIdea; // No local version, use mock idea as is
+    });
+
+    // Add any purely user-created ideas from local storage that are not in mockData
+    const userCreatedIdeas = localIdeas.filter(localIdea => !initialIdeas.some(mockIdea => mockIdea.id === localIdea.id));
+    combinedIdeas = [...combinedIdeas, ...userCreatedIdeas];
+
+    // If any mock idea's image URL was updated, persist this merged and "refreshed" state back to localStorage
+    if (wasLocalStorageUpdated || !storedIdeasRaw) { // also save if LS was initially empty
+        const ideasToSaveToLs = combinedIdeas.map(idea => ({
+            ...idea,
+            // Ensure createdAt is a string for localStorage
+            createdAt: typeof idea.createdAt === 'string' ? idea.createdAt : new Date(idea.createdAt).toISOString(),
+        }));
+        localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasToSaveToLs));
+    }
+    
+    const processedIdeas = combinedIdeas.map((idea: Idea) => ({
       ...idea,
       createdAt: new Date(idea.createdAt), 
     }));
