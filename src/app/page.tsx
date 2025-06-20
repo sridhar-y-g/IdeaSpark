@@ -38,10 +38,10 @@ export default function HomePage() {
               </div>
             </div>
             
-            <div className="flex justify-center" style={{ animationDelay: '0.3s' }}>
+            <div className="flex justify-center">
               <Image
                 src="https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png"
-                alt="Inspiring abstract visual representing ideas and innovation"
+                alt="Diverse team collaborating on ideas"
                 width={600}
                 height={450}
                 className="rounded-xl shadow-2xl"
