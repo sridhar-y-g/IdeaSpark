@@ -5,7 +5,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import type { Idea } from '@/lib/types';
 import { IdeaCard } from './IdeaCard';
 import { mockIdeas as initialIdeas } from '@/lib/mockData';
-import { Loader2, AlertTriangle } from 'lucide-react';
+import { Loader2, AlertTriangle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -17,10 +17,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
-const MAX_TRENDING_IDEAS = 6;
+const MAX_TRENDING_IDEAS = 10; // Can show more if scrollable with buttons
 
 export function TrendingIdeas() {
   const [allIdeas, setAllIdeas] = useState<Idea[]>([]);
@@ -29,10 +29,11 @@ export function TrendingIdeas() {
   const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] = useState(false);
   const [selectedIdeaIdForDeletion, setSelectedIdeaIdForDeletion] = useState<string | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [activeIndex, setActiveIndex] = useState(0); // Index of the card considered "active" or centered
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
 
   useEffect(() => {
-    // Same loading logic as IdeaFeed
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
     let localIdeas: Idea[] = [];
     if (storedIdeasRaw) {
@@ -124,62 +125,54 @@ export function TrendingIdeas() {
       .slice(0, MAX_TRENDING_IDEAS);
   }, [allIdeas]);
 
-  const handleScroll = useCallback(() => {
-    if (!scrollContainerRef.current || trendingIdeas.length === 0) return;
 
-    const container = scrollContainerRef.current;
-    const scrollLeft = container.scrollLeft;
-    const containerWidth = container.offsetWidth;
-    const cardElements = Array.from(container.children) as HTMLElement[];
-
-    let closestIndex = 0;
-    let minDistance = Infinity;
-
-    cardElements.forEach((cardWrapper, index) => {
-        const card = cardWrapper.firstChild as HTMLElement; // Assuming IdeaCard is the first child
-        if (!card) return;
-
-        const cardWidth = card.offsetWidth;
-        const cardOffsetLeft = cardWrapper.offsetLeft; // Use wrapper's offsetLeft
-
-        // Calculate the center of the card relative to the container's scroll position
-        const cardCenter = cardOffsetLeft + cardWidth / 2;
-        // Calculate the center of the viewport
-        const viewportCenter = scrollLeft + containerWidth / 2;
-        
-        const distance = Math.abs(cardCenter - viewportCenter);
-
-        if (distance < minDistance) {
-            minDistance = distance;
-            closestIndex = index;
-        }
-    });
-    setActiveIndex(closestIndex);
-  }, [trendingIdeas.length]);
+  const updateScrollButtons = useCallback(() => {
+    if (!scrollContainerRef.current) return;
+    const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
+    setCanScrollLeft(scrollLeft > 5); // Add a small threshold
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5); // Add a small threshold
+  }, []);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
-    if (!container) return;
+    if (!container || trendingIdeas.length === 0) {
+        setCanScrollLeft(false);
+        setCanScrollRight(false);
+        return;
+    }
+    
+    updateScrollButtons(); // Initial check
 
-    let ticking = false;
-    const onScroll = () => {
-      if (!ticking) {
-        window.requestAnimationFrame(() => {
-          handleScroll();
-          ticking = false;
-        });
-        ticking = true;
-      }
+    const handleScrollEvent = () => {
+        requestAnimationFrame(updateScrollButtons);
+    };
+    const handleResizeEvent = () => {
+        requestAnimationFrame(updateScrollButtons);
     };
 
-    container.addEventListener('scroll', onScroll, { passive: true });
-    // Initial check
-    handleScroll();
+    container.addEventListener('scroll', handleScrollEvent, { passive: true });
+    window.addEventListener('resize', handleResizeEvent);
 
     return () => {
-      container.removeEventListener('scroll', onScroll);
+      container.removeEventListener('scroll', handleScrollEvent);
+      window.removeEventListener('resize', handleResizeEvent);
     };
-  }, [handleScroll]);
+  }, [trendingIdeas, updateScrollButtons]);
+
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (!scrollContainerRef.current) return;
+    const container = scrollContainerRef.current;
+    // Approximate scroll amount based on typical card width (280px) + margin (1rem = 16px)
+    // A more robust way could be to get first child's offsetWidth, but this is simpler for now.
+    const scrollAmount = 280 + 16;
+
+    container.scrollBy({
+      left: direction === 'left' ? -scrollAmount : scrollAmount,
+      behavior: 'smooth',
+    });
+    // updateScrollButtons will be triggered by the 'scroll' event
+  };
 
 
   if (isLoading) {
@@ -201,6 +194,18 @@ export function TrendingIdeas() {
 
   return (
     <div className="relative">
+      {trendingIdeas.length > 0 && (
+        <Button
+          variant="outline"
+          size="icon"
+          className="absolute left-0 sm:left-[-1.5rem] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
+          onClick={() => scroll('left')}
+          disabled={!canScrollLeft}
+          aria-label="Scroll left"
+        >
+          <ChevronLeft className="h-6 w-6" />
+        </Button>
+      )}
       <div
         ref={scrollContainerRef}
         className="trending-ideas-scroll-container"
@@ -209,15 +214,26 @@ export function TrendingIdeas() {
           <div key={idea.id} className="trending-idea-item-wrapper">
             <IdeaCard
               idea={idea}
-              index={index} // This index might not be the original feed index
+              index={index}
               onUpvote={handleUpvote}
               onDeleteRequest={requestDeleteIdea}
-              isActiveTrending={index === activeIndex}
-              className="min-w-[300px] w-full" // Ensure cards have a minimum and take up space
+              className="w-full" // Ensure card takes full width of its wrapper
             />
           </div>
         ))}
       </div>
+      {trendingIdeas.length > 0 && (
+         <Button
+          variant="outline"
+          size="icon"
+          className="absolute right-0 sm:right-[-1.5rem] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
+          onClick={() => scroll('right')}
+          disabled={!canScrollRight}
+          aria-label="Scroll right"
+        >
+          <ChevronRight className="h-6 w-6" />
+        </Button>
+      )}
       <AlertDialog open={isConfirmDeleteDialogOpen} onOpenChange={setIsConfirmDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>

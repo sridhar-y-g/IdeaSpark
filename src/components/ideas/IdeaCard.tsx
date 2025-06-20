@@ -23,10 +23,10 @@ interface IdeaCardProps {
   onDeleteRequest: (ideaId: string) => void;
   style?: React.CSSProperties;
   className?: string;
-  isActiveTrending?: boolean;
+  // isActiveTrending prop removed
 }
 
-export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className, isActiveTrending }: IdeaCardProps) {
+export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -54,7 +54,6 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
 
   const handleUpvote = () => {
     onUpvote(idea.id);
-    // setCurrentUpvotes is now updated via useEffect listening to idea.upvotes prop
   };
 
   const handleToggleSave = () => {
@@ -92,16 +91,12 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
     try {
       if (navigator.share) {
         await navigator.share(shareData);
-        // Most browsers don't provide success feedback for navigator.share
-        // You might want a generic "Shared!" or no toast here.
       } else {
-        // Fallback for browsers that don't support Web Share API
         await navigator.clipboard.writeText(shareData.url);
         toast({ title: "Link Copied!", description: "Idea link copied to clipboard." });
       }
     } catch (err) {
       console.error('Error sharing idea:', err);
-      // Only show error if it's not an AbortError (user cancellation)
       if ((err as DOMException).name !== 'AbortError') {
         toast({ title: "Share Failed", description: "Could not share the idea at this time.", variant: "destructive" });
       }
@@ -115,7 +110,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
       <Card
         className={cn(
             "flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group",
-            isActiveTrending ? 'trending-active-card' : '',
+            // isActiveTrending class usage removed
             className
           )}
         style={style}
@@ -128,7 +123,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               fill
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
               data-ai-hint={idea.dataAiHint || "idea concept"}
-              priority={index < 3} 
+              priority={index < 3}
             />
           </div>
         )}
