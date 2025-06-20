@@ -1,12 +1,14 @@
+
 "use client";
 
 import React, { useState, useEffect, useMemo } from 'react';
 import type { Idea } from '@/lib/types';
 import { IdeaCard } from './IdeaCard';
 import { IdeaFilters, type Filters } from './IdeaFilters';
-import { mockIdeas as initialIdeas } from '@/lib/mockData'; // Using mock data
+import { mockIdeas as initialIdeas } from '@/lib/mockData'; 
 import { Button } from '../ui/button';
-import { Loader2, FileQuestion } from 'lucide-react';
+import { Loader2, FileQuestion, Sparkles } from 'lucide-react';
+import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -21,12 +23,26 @@ export function IdeaFeed() {
     sortBy: 'recent',
   });
 
-  // Simulate fetching ideas
   useEffect(() => {
-    const storedIdeas = localStorage.getItem('ideaSparkIdeas');
-    const ideasToLoad = storedIdeas ? JSON.parse(storedIdeas) : initialIdeas;
+    const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
+    let ideasToLoad = initialIdeas;
+
+    if (storedIdeasRaw) {
+        try {
+            const ideasFromStorage = JSON.parse(storedIdeasRaw);
+            // Basic validation to ensure it's an array
+            if (Array.isArray(ideasFromStorage)) {
+                 // Combine mock ideas and stored ideas, prioritizing stored ones or handling updates if IDs match.
+                 // For simplicity, we'll just use stored ideas if they exist, otherwise fallback to mock.
+                 // A more robust solution would merge, update, or de-duplicate.
+                 ideasToLoad = ideasFromStorage.length > 0 ? ideasFromStorage : initialIdeas;
+            }
+        } catch (e) {
+            console.warn("Could not parse ideas from localStorage, falling back to initial mock data.", e);
+            ideasToLoad = initialIdeas; // Fallback if parsing fails
+        }
+    }
     
-    // Ensure dates are Date objects for proper sorting
     const processedIdeas = ideasToLoad.map((idea: Idea) => ({
       ...idea,
       createdAt: new Date(idea.createdAt), 
@@ -53,7 +69,6 @@ export function IdeaFeed() {
   const filteredAndSortedIdeas = useMemo(() => {
     let ideas = [...allIdeas];
 
-    // Filter by search term (title or tags)
     if (filters.searchTerm) {
       const searchTermLower = filters.searchTerm.toLowerCase();
       ideas = ideas.filter(idea =>
@@ -62,12 +77,10 @@ export function IdeaFeed() {
       );
     }
 
-    // Filter by category
     if (filters.category !== 'all') {
       ideas = ideas.filter(idea => idea.category === filters.category);
     }
 
-    // Sort
     if (filters.sortBy === 'recent') {
       ideas.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } else if (filters.sortBy === 'popular') {
@@ -110,6 +123,7 @@ export function IdeaFeed() {
               <IdeaCard 
                 key={idea.id} 
                 idea={idea} 
+                index={index} // Pass index for priority image loading
                 onUpvote={handleUpvote} 
                 style={{ animationDelay: `${index * 100}ms` }}
                 className="feed-item-staggered"
@@ -125,20 +139,25 @@ export function IdeaFeed() {
           )}
         </>
       ) : (
-        <div className="text-center py-12 text-muted-foreground">
-           <FileQuestion className="mx-auto h-24 w-24 text-primary/50 mb-6" />
-          <h3 className="text-2xl font-headline mb-2 text-foreground">No Ideas Found</h3>
-          <p className="text-lg">Try adjusting your filters or be the first to <a href="/submit-idea" className="text-primary hover:underline">submit an idea</a>!</p>
+        <div className="text-center py-16 text-muted-foreground">
+           <FileQuestion className="mx-auto h-28 w-28 text-primary/30 mb-8" />
+          <h3 className="text-3xl font-headline mb-3 text-foreground">No Spark Here... Yet!</h3>
+          <p className="text-lg mb-6 max-w-md mx-auto">
+              Why not be the first to share your brilliant concept and light up the feed?
+          </p>
+          <Button asChild size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+            <Link href="/submit-idea">
+                <Sparkles className="mr-2 h-5 w-5" /> Submit Your Idea
+            </Link>
+          </Button>
         </div>
       )}
     </div>
   );
 }
 
-// Add className prop to IdeaCard to apply staggered animation class
 declare module './IdeaCard' {
   interface IdeaCardProps {
     className?: string;
   }
 }
-
