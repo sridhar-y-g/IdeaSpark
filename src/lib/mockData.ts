@@ -19,7 +19,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
     upvotes: 152,
-    coverImageUrl: 'https://placehold.co/600x400/50C878/FFFFFF.png', // Updated placeholder
+    coverImageUrl: 'https://placehold.co/600x400/50C878/FFFFFF.png', 
     // data-ai-hint for coverImageUrl should be handled in the component where Image is used
   },
   {
@@ -33,7 +33,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(), // 1 day ago
     upvotes: 230,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/3498DB/FFFFFF.png', // Blue
   },
   {
     id: '3',
@@ -46,7 +46,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_3.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days ago
     upvotes: 98,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/E67E22/FFFFFF.png', // Orange
   },
   {
     id: '4',
@@ -59,7 +59,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), // 5 hours ago
     upvotes: 188,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/8E44AD/FFFFFF.png', // Purple
   },
   {
     id: '5',
@@ -72,7 +72,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
     upvotes: 305,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/1ABC9C/FFFFFF.png', // Teal
   },
   {
     id: '6',
@@ -85,7 +85,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(), // 6 days ago
     upvotes: 120,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/E74C3C/FFFFFF.png', // Red
   },
   {
     id: '7',
@@ -98,7 +98,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(), // 10 days ago
     upvotes: 205,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/F1C40F/333333.png', // Yellow
   },
   {
     id: '8',
@@ -111,7 +111,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_3.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(), // 15 days ago
     upvotes: 165,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/FF69B4/FFFFFF.png', // Pink
   },
 ];
 
