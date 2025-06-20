@@ -88,4 +88,3 @@ To get this project running locally:
 *   `src/hooks/`: Custom React hooks (e.g., `useAuth.ts`, `useToast.ts`).
 *   `public/`: Static assets (though currently not heavily used for images, which are mostly placeholders or data URIs).
 
-This updated README should give a much clearer picture of what IdeaSpark is and how it's built!
