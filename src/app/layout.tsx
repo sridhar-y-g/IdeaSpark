@@ -17,15 +17,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>{/* suppressHydrationWarning recommended for next-themes */}
+    <html lang="en" suppressHydrationWarning>{/* Ensure no whitespace/newlines between <html> and <head> or <body> */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400;1,500;1,700;1,800&family=Belleza&display=swap" rel="stylesheet" />
       </head>
-      <body className="font-body antialiased">{/* Tailwind dark class will be applied to <html> by ThemeProvider */}
+      <body className="font-body antialiased">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
-          <AnimatedSpaceBackground /> {/* This will be visible primarily in dark mode due to CSS */}
+          <AnimatedSpaceBackground />
           <AuthProvider>
             {children}
             <Toaster />
