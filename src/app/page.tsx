@@ -37,7 +37,8 @@ export default function HomePage() {
                 </Button>
               </div>
             </div>
-            <div className="animate-slideInUp flex justify-center" style={{ animationDelay: '0.3s' }}>
+            {/* Removed animate-slideInUp from this div for diagnosis */}
+            <div className="flex justify-center" style={{ animationDelay: '0.3s' }}>
               <Image
                 src="https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png"
                 alt="Inspiring abstract visual representing ideas and innovation"
