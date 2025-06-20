@@ -17,11 +17,11 @@ import { useAuth } from '@/hooks/useAuth';
 
 interface IdeaCardProps {
   idea: Idea;
-  index: number; 
+  index: number;
   onUpvote: (ideaId: string) => void;
   onDeleteRequest: (ideaId: string) => void; // New prop for delete
   style?: React.CSSProperties;
-  className?: string; 
+  className?: string;
 }
 
 export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
@@ -38,8 +38,8 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
 
   return (
     <>
-      <Card 
-        className={cn("flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group", className)} 
+      <Card
+        className={cn("flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group", className)}
         style={style}
       >
         {idea.coverImageUrl && (
@@ -50,7 +50,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               fill
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
               data-ai-hint="idea concept"
-              priority={index < 3} 
+              priority={index < 3}
             />
           </div>
         )}
@@ -65,7 +65,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               <p className="text-xs text-muted-foreground">{timeAgo}</p>
             </div>
           </div>
-          <CardTitle className="font-headline text-2xl text-primary hover:text-accent transition-colors">
+          <CardTitle className="font-headline text-xl sm:text-2xl text-primary hover:text-accent transition-colors">
             <Link href={`/ideas/${idea.id}`}>{idea.title}</Link>
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground pt-1">
@@ -93,17 +93,17 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between items-center pt-4 border-t">
+        <CardFooter className="flex flex-wrap justify-between items-center pt-4 border-t gap-x-2 gap-y-3">
           <Button variant="ghost" onClick={handleUpvote} className="text-muted-foreground hover:text-primary group button-hover-effect">
-            <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" /> 
+            <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" />
             {currentUpvotes}
           </Button>
           <div className="flex space-x-1 items-center">
             {user && user.id === idea.userId && (
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => onDeleteRequest(idea.id)} 
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onDeleteRequest(idea.id)}
                 className="text-destructive/70 hover:text-destructive hover:bg-destructive/10 button-hover-effect"
                 aria-label="Delete idea"
               >
@@ -111,12 +111,12 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               </Button>
             )}
             <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
-              <MessageCircle className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" /> 
+              <MessageCircle className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" />
               <span className="hidden sm:inline">Chat</span>
             </Button>
             <Button variant="outline" asChild className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
               <Link href={`/ideas/${idea.id}`}>
-                <ExternalLink className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" /> 
+                <ExternalLink className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" />
                 <span className="hidden sm:inline">View</span>
               </Link>
             </Button>
