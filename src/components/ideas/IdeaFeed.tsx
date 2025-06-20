@@ -7,7 +7,7 @@ import { IdeaCard } from './IdeaCard';
 import { IdeaFilters, type Filters } from './IdeaFilters';
 import { mockIdeas as initialIdeas } from '@/lib/mockData'; 
 import { Button } from '../ui/button';
-import { Loader2, FileQuestion, Sparkles, Trash2 } from 'lucide-react';
+import { Loader2, FileQuestion, Sparkles, Trash2, RotateCcw } from 'lucide-react'; // Added RotateCcw
 import Link from 'next/link';
 import {
   AlertDialog,
@@ -168,7 +168,7 @@ export function IdeaFeed() {
           </div>
           {visibleCount < filteredAndSortedIdeas.length && (
             <div className="mt-12 text-center">
-              <Button onClick={loadMoreIdeas} size="lg" className="button-hover-effect">
+              <Button onClick={loadMoreIdeas} size="lg">
                 Load More Ideas
               </Button>
             </div>
@@ -182,11 +182,11 @@ export function IdeaFeed() {
             {filters.searchTerm ? "No ideas match your current search. Try adjusting your filters or search term." : "Why not be the first to share your brilliant concept and light up the feed?"}
           </p>
            {filters.searchTerm ? (
-            <Button onClick={resetFilters} size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button onClick={resetFilters} size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <RotateCcw className="mr-2 h-5 w-5" /> Reset Search & Filters
             </Button>
            ) : (
-            <Button asChild size="lg" className="button-hover-effect bg-primary text-primary-foreground hover:bg-primary/90">
+            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
               <Link href="/submit-idea">
                   <Sparkles className="mr-2 h-5 w-5" /> Submit Your Idea
               </Link>

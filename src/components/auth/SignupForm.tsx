@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -90,7 +91,7 @@ export function SignupForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full button-hover-effect text-lg py-6">
+            <Button type="submit" className="w-full text-lg py-6">
               Sign Up
             </Button>
           </form>

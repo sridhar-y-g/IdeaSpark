@@ -133,13 +133,7 @@ h1, h2, h3, h4, h5, h6 {
   @apply shadow-xl -translate-y-1;
 }
 
-.button-hover-effect {
-  @apply transition-all duration-200 ease-out;
-}
-.button-hover-effect:hover {
-  /* filter: brightness(1.1); Removed for more specific hover states */
-  transform: scale(1.03);
-}
+/* Removed .button-hover-effect as its logic is now in button.tsx */
 
 .feed-item-staggered {
   opacity: 0;
@@ -288,4 +282,3 @@ h1, h2, h3, h4, h5, h6 {
     pointer-events: none;
 }
 /* End of New Animated Background CSS */
-

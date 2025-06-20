@@ -6,13 +6,13 @@ import { IdeaFeed } from "@/components/ideas/IdeaFeed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Lightbulb } from "lucide-react"; // Removed RotateCcw as it's not used
+import { Sparkles, Lightbulb, RotateCcw } from "lucide-react"; 
 import React, { useState, useEffect } from 'react';
 import { generateHeroImageAction } from '@/lib/actions';
 import { useToast } from "@/hooks/use-toast";
 
 const STATIC_HERO_IMAGE_URL = "https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png";
-const STATIC_HERO_IMAGE_ALT = "Inspiring visual for IdeaSpark"; // More generic alt text
+const STATIC_HERO_IMAGE_ALT = "Diverse team collaborating on ideas"; 
 
 export default function HomePage() {
   const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
@@ -64,12 +64,12 @@ export default function HomePage() {
                 IdeaSpark is the ultimate platform to brainstorm, share, and discover innovative concepts. Turn your sparks of genius into brilliant realities.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-                <Button asChild size="lg" className="button-hover-effect text-lg py-7 px-8 bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button asChild size="lg" className="text-lg py-7 px-8 bg-primary text-primary-foreground hover:bg-primary/90">
                   <Link href="/submit-idea">
                     <Lightbulb className="mr-2 h-5 w-5" /> Submit Your Idea
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="button-hover-effect text-lg py-7 px-8 border-primary text-primary hover:bg-primary/5">
+                <Button asChild variant="outline" size="lg" className="text-lg py-7 px-8 border-primary text-primary hover:bg-primary/5">
                   <Link href="#idea-feed">
                     <Sparkles className="mr-2 h-5 w-5" /> Explore Ideas
                   </Link>
@@ -84,7 +84,7 @@ export default function HomePage() {
                 width={600}
                 height={450}
                 className="rounded-xl shadow-2xl"
-                data-ai-hint="abstract ideas" // Generic hint for AI generated or static
+                data-ai-hint="collaboration team" 
                 priority // Important for LCP
                 key={heroImageUrl || STATIC_HERO_IMAGE_URL} // Add key to force re-render on src change
               />
