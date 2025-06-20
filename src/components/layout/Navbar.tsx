@@ -9,13 +9,13 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { PlusCircle, LogIn, LogOut, Menu } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import React, { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { usePathname, useRouter } from 'next/navigation'; // Moved useRouter import here
-import { cn } from "@/lib/utils"; // Consolidated imports
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'; // Added SheetHeader, SheetTitle
+import { usePathname, useRouter } from 'next/navigation'; 
+import { cn } from "@/lib/utils"; 
 
 export function Navbar() {
   const { user, logout, loading } = useAuth();
-  const router = useRouter(); // Initialize router
+  const router = useRouter(); 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
@@ -127,6 +127,9 @@ export function Navbar() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-full max-w-xs bg-background p-6 pt-12">
+                <SheetHeader className="mb-6 text-left">
+                  <SheetTitle className="text-2xl font-headline">Menu</SheetTitle>
+                </SheetHeader>
                 <div className="flex flex-col space-y-4">
                   {renderNavLinks(true)}
                   <hr className="my-4 border-border" />
