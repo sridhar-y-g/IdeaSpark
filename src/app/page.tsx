@@ -39,7 +39,7 @@ export default function HomePage() {
             </div>
             <div className="animate-slideInUp flex justify-center" style={{ animationDelay: '0.3s' }}>
               <Image
-                src="https://placehold.co/600x450.png"
+                src="https://placehold.co/600x450/800080/FFFFFF.png"
                 alt="Inspiring abstract visual representing ideas and innovation"
                 width={600}
                 height={450}
