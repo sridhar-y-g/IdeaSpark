@@ -61,6 +61,13 @@ export async function submitIdeaAction(
   const data = validatedFields.data;
 
   try {
+    const vibrantColors = [
+      'E91E63', '4CAF50', 'FFC107', '2196F3', '9C27B0', 'FF5722', '00BCD4', 'F44336',
+      '3F51B5', '009688', 'FF9800', '673AB7', '795548', '607D8B', 'FFEB3B', 'CDDC39'
+    ];
+    const randomColor = vibrantColors[Math.floor(Math.random() * vibrantColors.length)];
+    const textForPlaceholder = encodeURIComponent(data.title.substring(0,15).trim() || "Idea");
+
     const newIdea: Idea = {
       id: `idea-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
       title: data.title,
@@ -72,7 +79,7 @@ export async function submitIdeaAction(
       userAvatarUrl: data.userAvatarUrl,
       createdAt: new Date().toISOString(),
       upvotes: 0,
-      coverImageUrl: `https://placehold.co/600x400.png?text=${encodeURIComponent(data.title.substring(0,15))}`
+      coverImageUrl: `https://placehold.co/600x400/${randomColor}/FFFFFF.png?text=${textForPlaceholder}`
     };
 
     return { message: "Idea submitted successfully!", success: true, submittedIdea: newIdea };
