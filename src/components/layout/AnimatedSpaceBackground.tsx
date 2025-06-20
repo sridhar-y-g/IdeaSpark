@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef } from 'react';
@@ -45,10 +46,7 @@ const AnimatedSpaceBackground: React.FC = () => {
       <div id="large-header" className="large-header">
         <canvas id="demo-canvas" ref={canvasRef}></canvas>
       </div>
-      {/* Example Title - user can customize this */}
-      <h1 className="main-title">
-        IDEA<span className="thin">SPARK</span>
-      </h1>
+      {/* The main-title h1 element has been removed */}
     </div>
   );
 };
