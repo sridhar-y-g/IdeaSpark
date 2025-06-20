@@ -297,32 +297,42 @@ h1, h2, h3, h4, h5, h6 {
 .trending-ideas-scroll-container {
     display: flex;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    /* gap: 1rem; /* Removed: using margin on item wrapper instead */
+    /* scroll-snap-type: x mandatory; */ /* Removed for better overlap/hover interaction */
     padding-bottom: 1.5rem; /* For shadow visibility and scrollbar area */
+    padding-left: 1rem; /* Space for the first card, adjust as needed for overlap */
      /* Hide scrollbar for webkit browsers */
     &::-webkit-scrollbar {
       display: none;
     }
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
-    position: relative; /* Added for positioning buttons if they were inside */
+    position: relative; /* Added for positioning buttons */
 }
 
 .trending-idea-item-wrapper {
     flex: 0 0 auto; /* Prevent shrinking/growing */
     width: 280px; /* Fixed width for cards in trending section */
-    scroll-snap-align: start; /* Snap to start for button navigation */
-    margin-right: 1rem; /* Space between cards */
-    /* padding-top and padding-bottom removed as zoom effect is gone */
+    /* scroll-snap-align: start; */ /* Removed with scroll-snap-type */
+    transition: transform 0.3s ease-out, z-index 0.3s ease-out;
+    position: relative; /* For z-index stacking context */
+}
+
+.trending-idea-item-wrapper:not(:first-child) {
+    margin-left: -50px; /* Adjust this value for desired overlap amount (e.g., -50px) */
+}
+
+.trending-idea-item-wrapper:hover {
+    transform: translateY(-8px) scale(1.03); /* Slight lift and scale on hover */
+    z-index: 10; /* Bring hovered card to front */
 }
 
 @media (max-width: 639px) { /* Responsive adjustment for smaller screens */
     .trending-idea-item-wrapper {
-        width: calc(100vw - 6rem); /* Allow card to be wider on small screens, e.g., viewport width minus some padding/margins for buttons */
+        width: calc(100vw - 6rem); /* Allow card to be wider on small screens */
         max-width: 280px; /* But don't let it exceed the standard small size */
     }
+    .trending-idea-item-wrapper:not(:first-child) {
+      margin-left: -40px; /* Adjust overlap for smaller screens */
+    }
 }
-
-/* Removed .trending-active-card as zoom effect is removed */
 /* End Trending Ideas CSS */

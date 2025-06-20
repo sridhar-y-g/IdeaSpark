@@ -20,7 +20,9 @@ import {
 import { Button } from '@/components/ui/button';
 import { Trash2 } from 'lucide-react';
 
-const MAX_TRENDING_IDEAS = 10; // Can show more if scrollable with buttons
+const MAX_TRENDING_IDEAS = 10; 
+const CARD_WIDTH = 280; // Must match .trending-idea-item-wrapper width in globals.css
+const OVERLAP_AMOUNT = 50; // Must match negative margin-left in globals.css
 
 export function TrendingIdeas() {
   const [allIdeas, setAllIdeas] = useState<Idea[]>([]);
@@ -129,8 +131,8 @@ export function TrendingIdeas() {
   const updateScrollButtons = useCallback(() => {
     if (!scrollContainerRef.current) return;
     const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current;
-    setCanScrollLeft(scrollLeft > 5); // Add a small threshold
-    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5); // Add a small threshold
+    setCanScrollLeft(scrollLeft > 5); 
+    setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 5); 
   }, []);
 
   useEffect(() => {
@@ -141,7 +143,7 @@ export function TrendingIdeas() {
         return;
     }
     
-    updateScrollButtons(); // Initial check
+    updateScrollButtons(); 
 
     const handleScrollEvent = () => {
         requestAnimationFrame(updateScrollButtons);
@@ -154,7 +156,9 @@ export function TrendingIdeas() {
     window.addEventListener('resize', handleResizeEvent);
 
     return () => {
-      container.removeEventListener('scroll', handleScrollEvent);
+      if (container) { // Check if container exists before removing event listener
+        container.removeEventListener('scroll', handleScrollEvent);
+      }
       window.removeEventListener('resize', handleResizeEvent);
     };
   }, [trendingIdeas, updateScrollButtons]);
@@ -163,15 +167,13 @@ export function TrendingIdeas() {
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollContainerRef.current) return;
     const container = scrollContainerRef.current;
-    // Approximate scroll amount based on typical card width (280px) + margin (1rem = 16px)
-    // A more robust way could be to get first child's offsetWidth, but this is simpler for now.
-    const scrollAmount = 280 + 16;
+    // Scroll by the visible width of one card (card width - overlap amount)
+    const scrollAmount = CARD_WIDTH - OVERLAP_AMOUNT; 
 
     container.scrollBy({
       left: direction === 'left' ? -scrollAmount : scrollAmount,
       behavior: 'smooth',
     });
-    // updateScrollButtons will be triggered by the 'scroll' event
   };
 
 
@@ -193,12 +195,12 @@ export function TrendingIdeas() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative px-0 sm:px-10"> {/* Add horizontal padding for button space */}
       {trendingIdeas.length > 0 && (
         <Button
           variant="outline"
           size="icon"
-          className="absolute left-0 sm:left-[-1.5rem] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
           onClick={() => scroll('left')}
           disabled={!canScrollLeft}
           aria-label="Scroll left"
@@ -217,7 +219,7 @@ export function TrendingIdeas() {
               index={index}
               onUpvote={handleUpvote}
               onDeleteRequest={requestDeleteIdea}
-              className="w-full" // Ensure card takes full width of its wrapper
+              className="w-full" 
             />
           </div>
         ))}
@@ -226,7 +228,7 @@ export function TrendingIdeas() {
          <Button
           variant="outline"
           size="icon"
-          className="absolute right-0 sm:right-[-1.5rem] top-1/2 -translate-y-1/2 z-10 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 bg-background/80 hover:bg-background disabled:opacity-30 disabled:cursor-not-allowed shadow-md"
           onClick={() => scroll('right')}
           disabled={!canScrollRight}
           aria-label="Scroll right"
@@ -256,3 +258,4 @@ export function TrendingIdeas() {
     </div>
   );
 }
+
