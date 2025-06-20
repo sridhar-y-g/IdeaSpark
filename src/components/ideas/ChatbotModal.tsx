@@ -35,22 +35,20 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           timestamp: new Date().toISOString(),
         }
       ]);
-      setInputValue(''); // Clear input when modal opens
+      setInputValue(''); 
     }
   }, [isOpen, idea.title]);
 
   useEffect(() => {
-    // Scroll to bottom when new messages are added or loading state changes
     if (scrollAreaRef.current) {
       const viewport = scrollAreaRef.current.querySelector('div[data-radix-scroll-area-viewport]') as HTMLElement | null;
       if (viewport) {
-        // Use setTimeout to ensure scrollHeight is updated after new messages are rendered
         setTimeout(() => {
           viewport.scrollTop = viewport.scrollHeight;
         }, 0);
       }
     }
-  }, [messages, isLoading]); // Added isLoading as a dependency
+  }, [messages, isLoading]);
 
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
@@ -97,17 +95,17 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px] p-0 flex flex-col max-h-[90vh]">
         <DialogHeader className="p-6 pb-4 border-b">
-          <div className="flex items-center space-x-3">
-             <MessageSquare className="h-8 w-8 text-primary"/>
-            <div>
-                <DialogTitle className="font-headline text-2xl">Chat about: {idea.title}</DialogTitle>
-                <DialogDescription>Ask questions and get insights from our AI assistant.</DialogDescription>
+          <div className="flex items-start space-x-3"> {/* Changed items-center to items-start */}
+             <MessageSquare className="h-8 w-8 text-primary flex-shrink-0"/> {/* Added flex-shrink-0 */}
+            <div className="flex-grow min-w-0"> {/* Added flex-grow and min-w-0 for text container */}
+                <DialogTitle className="font-headline text-2xl break-words">Chat about: {idea.title}</DialogTitle> {/* Added break-words */}
+                <DialogDescription className="break-words">Ask questions and get insights from our AI assistant.</DialogDescription> {/* Added break-words */}
             </div>
           </div>
         </DialogHeader>
         
         <ScrollArea className="flex-grow p-6" ref={scrollAreaRef}>
-          <div className="space-y-6 pr-4"> {/* Added pr-4 to prevent scrollbar overlap */}
+          <div className="space-y-6 pr-4"> 
             {messages.map(msg => (
               <div key={msg.id} className={cn("flex items-end space-x-3", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
                 {msg.sender === 'bot' && (
