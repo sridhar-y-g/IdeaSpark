@@ -3,6 +3,8 @@
 
 import React, { useEffect, useRef } from 'react';
 
+// This component is no longer used and can be considered for deletion.
+// The new background is implemented in NewAnimatedBackground.tsx
 const AnimatedSpaceBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -10,29 +12,15 @@ const AnimatedSpaceBackground: React.FC = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Basic canvas setup (resize to fit its container)
-    // The actual animation JavaScript for drawing on the canvas is not provided by the user.
-    // This setup ensures the canvas element itself is responsive.
     const fitToContainer = (canvasEl: HTMLCanvasElement) => {
-      // Ensure the canvas is sized based on its displayed size in the layout
-      // The CSS handles the container (.large-header) size. Canvas fills this.
       canvasEl.width = canvasEl.offsetWidth;
       canvasEl.height = canvasEl.offsetHeight;
     };
     
-    // Initial resize
     fitToContainer(canvas);
 
-    // Resize on window resize
     const handleResize = () => fitToContainer(canvas);
     window.addEventListener('resize', handleResize);
-
-    // Placeholder for user's canvas drawing logic:
-    // const ctx = canvas.getContext('2d');
-    // if (ctx) {
-    //   // User's animation code would go here.
-    //   // e.g., ctx.fillRect(10, 10, 100, 100);
-    // }
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -40,13 +28,10 @@ const AnimatedSpaceBackground: React.FC = () => {
   }, []);
 
   return (
-    // The .demo class from user's example is applied here.
-    // CSS in globals.css targets .dark .large-header-container.demo to show this.
-    <div className="large-header-container demo">
+    <div className="large-header-container demo" style={{ display: 'none' }}> {/* Hidden explicitly */}
       <div id="large-header" className="large-header">
         <canvas id="demo-canvas" ref={canvasRef}></canvas>
       </div>
-      {/* The main-title h1 element has been removed */}
     </div>
   );
 };
