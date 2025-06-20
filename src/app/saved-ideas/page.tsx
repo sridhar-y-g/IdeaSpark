@@ -34,34 +34,61 @@ export default function SavedIdeasPage() {
 
   useEffect(() => {
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
-    let ideasToLoad = initialIdeas;
-
+    let localIdeas: Idea[] = [];
     if (storedIdeasRaw) {
-      try {
-        const ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
-        if (Array.isArray(ideasFromStorage)) {
-          const storedIdeaIdsSet = new Set(ideasFromStorage.map(i => i.id));
-          const uniqueMockIdeas = initialIdeas.filter(mi => !storedIdeaIdsSet.has(mi.id));
-          ideasToLoad = [...ideasFromStorage, ...uniqueMockIdeas];
+        try {
+            localIdeas = JSON.parse(storedIdeasRaw);
+        } catch (e) {
+            console.warn("Could not parse ideas from localStorage, will use initial mock data.", e);
+            localIdeas = [];
         }
-      } catch (e) {
-        console.warn("Could not parse ideas from localStorage, falling back to initial mock data.", e);
-      }
     }
-    const processedIdeas = ideasToLoad.map((idea: Idea) => ({
+
+    const localIdeasMap = new Map(localIdeas.map(idea => [idea.id, idea]));
+    let wasLocalStorageUpdated = false;
+
+    let combinedIdeas = initialIdeas.map(mockIdea => {
+        const localIdea = localIdeasMap.get(mockIdea.id);
+        if (localIdea) {
+            if (localIdea.coverImageUrl !== mockIdea.coverImageUrl || localIdea.dataAiHint !== mockIdea.dataAiHint) {
+                wasLocalStorageUpdated = true;
+            }
+            return {
+                ...mockIdea,
+                upvotes: localIdea.upvotes,
+                userId: localIdea.userId,
+                userName: localIdea.userName,
+                userAvatarUrl: localIdea.userAvatarUrl,
+                createdAt: localIdea.createdAt,
+            };
+        }
+        return mockIdea;
+    });
+
+    const userCreatedIdeas = localIdeas.filter(localIdea => !initialIdeas.some(mockIdea => mockIdea.id === localIdea.id));
+    combinedIdeas = [...combinedIdeas, ...userCreatedIdeas];
+    
+    if (wasLocalStorageUpdated || !storedIdeasRaw) {
+        const ideasToSaveToLs = combinedIdeas.map(idea => ({
+            ...idea,
+            createdAt: typeof idea.createdAt === 'string' ? idea.createdAt : new Date(idea.createdAt).toISOString(),
+        }));
+        localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasToSaveToLs));
+    }
+
+    const processedIdeas = combinedIdeas.map((idea: Idea) => ({
       ...idea,
       createdAt: new Date(idea.createdAt),
     }));
     setAllIdeas(processedIdeas);
-  }, []);
 
-  useEffect(() => {
+    // Fetch saved idea IDs after allIdeas is set
     if (user) {
       const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
-      const savedIdeasRaw = localStorage.getItem(savedIdeasKey);
-      if (savedIdeasRaw) {
+      const currentSavedIdeasRaw = localStorage.getItem(savedIdeasKey);
+      if (currentSavedIdeasRaw) {
         try {
-          setSavedIdeaIds(JSON.parse(savedIdeasRaw));
+          setSavedIdeaIds(JSON.parse(currentSavedIdeasRaw));
         } catch (e) {
           console.error("Error parsing saved ideas from localStorage", e);
           setSavedIdeaIds([]);
@@ -72,11 +99,16 @@ export default function SavedIdeasPage() {
     } else {
       setSavedIdeaIds([]);
     }
-    setIsLoading(authLoading); // Page loading depends on auth status as well
+    setIsLoading(authLoading);
   }, [user, authLoading]);
 
-  const saveIdeasToLocalStorage = (ideas: Idea[]) => {
-    localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideas));
+
+  const saveIdeasToLocalStorage = (ideasToSave: Idea[]) => {
+    const ideasWithStringDate = ideasToSave.map(idea => ({
+        ...idea,
+        createdAt: typeof idea.createdAt === 'string' ? idea.createdAt : new Date(idea.createdAt).toISOString(),
+    }));
+    localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasWithStringDate));
   };
 
   const handleUpvote = (ideaId: string) => {
@@ -101,7 +133,6 @@ export default function SavedIdeasPage() {
       const updatedIdeas = prevIdeas.filter(idea => idea.id !== selectedIdeaIdForDeletion);
       saveIdeasToLocalStorage(updatedIdeas);
 
-      // Also remove from saved ideas if it was there
       setSavedIdeaIds(prevSavedIds => prevSavedIds.filter(id => id !== selectedIdeaIdForDeletion));
       if (user) {
         const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
@@ -122,7 +153,7 @@ export default function SavedIdeasPage() {
   const savedIdeas = useMemo(() => {
     return allIdeas
       .filter(idea => savedIdeaIds.includes(idea.id))
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Sort by most recently created first
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }, [allIdeas, savedIdeaIds]);
 
   if (isLoading || authLoading) {
