@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Logo } from './Logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlusCircle, LogIn, LogOut, Menu, User } from 'lucide-react'; // Added User for Fallback
+import { PlusCircle, LogIn, LogOut, Menu, User, Bookmark } from 'lucide-react'; 
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import React, { useState, useEffect } from 'react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -27,6 +27,7 @@ export function Navbar() {
   const navLinks = [
     { href: '/', label: 'Feed' },
     { href: '/submit-idea', label: 'Submit Idea', authRequired: true },
+    { href: '/saved-ideas', label: 'Saved Ideas', authRequired: true, icon: Bookmark },
   ];
 
   const renderNavLinks = (isMobile: boolean = false) => (
@@ -35,9 +36,8 @@ export function Navbar() {
       const isActive = pathname === link.href;
       const isSubmitIdeaLink = link.href === '/submit-idea';
       
-      // For desktop, "Submit Idea" is 'default' if user is logged in, others are 'ghost'.
-      // For mobile, all are 'ghost'.
       const buttonVariant = (isSubmitIdeaLink && !isMobile && user) ? "default" : "ghost";
+      const Icon = link.icon;
 
       return (
         <Button
@@ -45,13 +45,14 @@ export function Navbar() {
           variant={buttonVariant}
           asChild
           className={cn(
-            isMobile && "w-full justify-start text-lg py-3", // Mobile layout: full width, text-left
-            // Specific active styling for ghost buttons to make them "pop"
+            isMobile && "w-full justify-start text-lg py-3", 
             isActive && buttonVariant === 'ghost' && "bg-primary/10 text-primary font-semibold"
-            // For 'default' variant buttons, the active state is its normal prominent style.
           )}
         >
-          <Link href={link.href}>{link.label}</Link>
+          <Link href={link.href}>
+            {Icon && isMobile && <Icon className="mr-3 h-5 w-5" />}
+            {link.label}
+          </Link>
         </Button>
       );
     })
@@ -63,7 +64,7 @@ export function Navbar() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-8">
           <Logo />
-          <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div> {/* Skeleton for auth buttons */}
+          <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div>
         </div>
       </header>
     );
@@ -103,6 +104,10 @@ export function Navbar() {
                 <DropdownMenuItem onClick={() => router.push('/submit-idea')} className="cursor-pointer">
                   <PlusCircle className="mr-2 h-4 w-4" />
                   <span>Submit Idea</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => router.push('/saved-ideas')} className="cursor-pointer">
+                  <Bookmark className="mr-2 h-4 w-4" />
+                  <span>Saved Ideas</span>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={logout} className="text-red-600 focus:text-red-600 focus:bg-red-50 cursor-pointer">
