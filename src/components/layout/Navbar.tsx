@@ -6,10 +6,10 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Logo } from './Logo';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PlusCircle, LogIn, LogOut, Menu } from 'lucide-react';
+import { PlusCircle, LogIn, LogOut, Menu, User } from 'lucide-react'; // Added User for Fallback
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import React, { useState, useEffect } from 'react';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'; // Added SheetHeader, SheetTitle
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { usePathname, useRouter } from 'next/navigation'; 
 import { cn } from "@/lib/utils"; 
 
@@ -29,22 +29,26 @@ export function Navbar() {
     { href: '/submit-idea', label: 'Submit Idea', authRequired: true },
   ];
 
-  const commonButtonClasses = ""; // Removed button-hover-effect
-
   const renderNavLinks = (isMobile: boolean = false) => (
     navLinks.map(link => {
       if (link.authRequired && !user) return null;
       const isActive = pathname === link.href;
+      const isSubmitIdeaLink = link.href === '/submit-idea';
+      
+      // For desktop, "Submit Idea" is 'default' if user is logged in, others are 'ghost'.
+      // For mobile, all are 'ghost'.
+      const buttonVariant = (isSubmitIdeaLink && !isMobile && user) ? "default" : "ghost";
+
       return (
         <Button
           key={link.label}
-          variant="ghost"
+          variant={buttonVariant}
           asChild
           className={cn(
-            commonButtonClasses,
-            "text-foreground hover:text-primary hover:bg-primary/10",
-            isActive && "text-primary bg-primary/10 font-semibold",
-            isMobile && "w-full justify-start text-lg py-3"
+            isMobile && "w-full justify-start text-lg py-3", // Mobile layout: full width, text-left
+            // Specific active styling for ghost buttons to make them "pop"
+            isActive && buttonVariant === 'ghost' && "bg-primary/10 text-primary font-semibold"
+            // For 'default' variant buttons, the active state is its normal prominent style.
           )}
         >
           <Link href={link.href}>{link.label}</Link>
@@ -57,9 +61,9 @@ export function Navbar() {
   if (loading) {
     return (
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 max-w-screen-2xl items-center justify-between">
+        <div className="container flex h-16 max-w-screen-2xl items-center justify-between px-4 md:px-8">
           <Logo />
-          <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div>
+          <div className="h-8 w-24 rounded-md bg-muted animate-pulse"></div> {/* Skeleton for auth buttons */}
         </div>
       </header>
     );
@@ -79,7 +83,10 @@ export function Navbar() {
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-10 w-10 border-2 border-primary">
                     <AvatarImage src={user.avatarUrl} alt={user.name || user.email} data-ai-hint="profile avatar" />
-                    <AvatarFallback>{user.name ? user.name.substring(0,1).toUpperCase() : user.email.substring(0,1).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>
+                      {user.name ? user.name.substring(0,1).toUpperCase() : 
+                       user.email ? user.email.substring(0,1).toUpperCase() : <User className="h-5 w-5"/>}
+                    </AvatarFallback>
                   </Avatar>
                 </Button>
               </DropdownMenuTrigger>
@@ -106,12 +113,12 @@ export function Navbar() {
             </DropdownMenu>
           ) : (
             <div className="hidden md:flex items-center space-x-2">
-              <Button variant="ghost" asChild className={cn(commonButtonClasses, "text-foreground hover:text-primary hover:bg-primary/10")}>
+              <Button variant="ghost" asChild>
                 <Link href="/login">
                   <LogIn className="mr-2 h-4 w-4" /> Log In
                 </Link>
               </Button>
-              <Button asChild className={cn(commonButtonClasses, "bg-primary text-primary-foreground hover:bg-primary/90")}>
+              <Button variant="default" asChild>
                 <Link href="/signup">
                   Sign Up
                 </Link>
@@ -135,16 +142,16 @@ export function Navbar() {
                   <hr className="my-4 border-border" />
                   {user ? (
                      <>
-                      <Button variant="ghost" onClick={() => { logout(); setIsMobileMenuOpen(false); }} className={cn(commonButtonClasses, "w-full justify-start text-lg py-3 text-red-500 hover:text-red-600")}>
+                      <Button variant="ghost" onClick={() => { logout(); setIsMobileMenuOpen(false); }} className={cn("w-full justify-start text-lg py-3 text-red-500 hover:text-red-600")}>
                         <LogOut className="mr-3 h-5 w-5" /> Log Out
                       </Button>
                     </>
                   ) : (
                     <>
-                      <Button variant="ghost" asChild className={cn(commonButtonClasses, "w-full justify-start text-lg py-3")}>
+                      <Button variant="ghost" asChild className={cn("w-full justify-start text-lg py-3")}>
                         <Link href="/login"><LogIn className="mr-3 h-5 w-5" /> Log In</Link>
                       </Button>
-                      <Button asChild className={cn(commonButtonClasses, "w-full justify-start text-lg py-3 bg-primary text-primary-foreground hover:bg-primary/90")}>
+                      <Button variant="default" asChild className={cn("w-full justify-start text-lg py-3")}>
                         <Link href="/signup">Sign Up</Link>
                       </Button>
                     </>
