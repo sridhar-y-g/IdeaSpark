@@ -19,7 +19,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), 
     upvotes: 152,
-    coverImageUrl: 'https://placehold.co/600x400/2ECC71/FFFFFF.png?text=GardenAI', // Keep green
+    coverImageUrl: 'https://placehold.co/600x400/2ECC71/FFFFFF.png?text=GardenAI',
+    dataAiHint: "garden tech"
   },
   {
     id: '2',
@@ -32,7 +33,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(), 
     upvotes: 230,
-    coverImageUrl: 'https://placehold.co/600x400/3498DB/FFFFFF.png?text=StoryFun', // Blue
+    coverImageUrl: 'https://placehold.co/600x400/3498DB/FFFFFF.png?text=StoryFun',
+    dataAiHint: "kids story"
   },
   {
     id: '3',
@@ -45,7 +47,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_3.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), 
     upvotes: 98,
-    coverImageUrl: 'https://placehold.co/600x400/E67E22/FFFFFF.png?text=EcoRide', // Orange
+    coverImageUrl: 'https://placehold.co/600x400/E67E22/FFFFFF.png?text=EcoRide',
+    dataAiHint: "ebike city"
   },
   {
     id: '4',
@@ -58,7 +61,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(), 
     upvotes: 188,
-    coverImageUrl: 'https://placehold.co/600x400/9B59B6/FFFFFF.png?text=VRMuseum', // Purple
+    coverImageUrl: 'https://placehold.co/600x400/9B59B6/FFFFFF.png?text=VRMuseum',
+    dataAiHint: "virtual museum"
   },
   {
     id: '5',
@@ -71,7 +75,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_2.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), 
     upvotes: 305,
-    coverImageUrl: 'https://placehold.co/600x400/1ABC9C/FFFFFF.png?text=MindWell', // Teal
+    coverImageUrl: 'https://placehold.co/600x400/1ABC9C/FFFFFF.png?text=MindWell',
+    dataAiHint: "wellness app"
   },
   {
     id: '6',
@@ -84,7 +89,8 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 6).toISOString(), 
     upvotes: 120,
-    coverImageUrl: 'https://placehold.co/600x400/E74C3C/FFFFFF.png?text=Connect', // Red
+    coverImageUrl: 'https://placehold.co/600x400/E74C3C/FFFFFF.png?text=Connect',
+    dataAiHint: "community sharing"
   },
   {
     id: '7',
@@ -98,6 +104,7 @@ export const mockIdeas: Idea[] = [
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 10).toISOString(), 
     upvotes: 205,
     coverImageUrl: 'https://placehold.co/600x400/F1C40F/333333.png?text=EthiWear', // Yellow with dark text
+    dataAiHint: "fashion ethics"
   },
   {
     id: '8',
@@ -110,6 +117,9 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_3.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(), 
     upvotes: 165,
-    coverImageUrl: 'https://placehold.co/600x400/D35400/FFFFFF.png?text=LingoPlay', // Dark Orange
+    coverImageUrl: 'https://placehold.co/600x400/D35400/FFFFFF.png?text=LingoPlay',
+    dataAiHint: "language game"
   },
 ];
+
+    
