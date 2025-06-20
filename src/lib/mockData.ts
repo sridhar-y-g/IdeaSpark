@@ -19,7 +19,7 @@ export const mockIdeas: Idea[] = [
     userAvatarUrl: MOCK_USER_1.avatarUrl,
     createdAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(), // 2 hours ago
     upvotes: 152,
-    coverImageUrl: 'https://placehold.co/600x400.png',
+    coverImageUrl: 'https://placehold.co/600x400/50C878/FFFFFF.png', // Updated placeholder
     // data-ai-hint for coverImageUrl should be handled in the component where Image is used
   },
   {
