@@ -39,12 +39,12 @@ export default function HomePage() {
             </div>
             <div className="animate-slideInUp flex justify-center" style={{ animationDelay: '0.3s' }}>
               <Image
-                src="https://placehold.co/600x450/800080/FFFFFF.png"
+                src="https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png"
                 alt="Inspiring abstract visual representing ideas and innovation"
                 width={600}
                 height={450}
                 className="rounded-xl shadow-2xl"
-                data-ai-hint="abstract innovation"
+                data-ai-hint="collaboration team"
                 priority
               />
             </div>
