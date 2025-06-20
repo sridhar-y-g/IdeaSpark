@@ -18,12 +18,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TagInput } from "./TagInput";
-import { IdeaCategory } from "@/lib/types";
+import { IdeaCategory, type Idea } from "@/lib/types";
 import type { User } from "@/lib/types";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
-import { useEffect, useState, useActionState } from "react"; // Changed from 'react-dom' for useFormState
-import { useFormStatus } from 'react-dom'; // useFormStatus remains in react-dom
+import { useEffect, useState, useActionState } from "react";
+import { useFormStatus } from 'react-dom';
 import { submitIdeaAction, type SubmitIdeaState } from '@/lib/actions';
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -69,7 +69,7 @@ export function IdeaForm() {
     },
   });
   
-  const [formState, formAction] = useActionState<SubmitIdeaState, FormData>(submitIdeaAction, { success: false }); // Renamed useFormState to useActionState
+  const [formState, formAction] = useActionState<SubmitIdeaState, FormData>(submitIdeaAction, { success: false });
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -83,9 +83,27 @@ export function IdeaForm() {
         title: "Success!",
         description: formState.message || "Your idea has been submitted.",
       });
-      form.reset(); // Reset form fields
-      // Optionally, redirect to the idea page or feed
-      router.push('/'); // Or `/ideas/${formState.submittedIdea.id}`
+
+      // Save to localStorage
+      try {
+        const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
+        let ideasFromStorage: Idea[] = [];
+        if (storedIdeasRaw) {
+          ideasFromStorage = JSON.parse(storedIdeasRaw);
+        }
+        const updatedIdeas = [formState.submittedIdea, ...ideasFromStorage];
+        localStorage.setItem('ideaSparkIdeas', JSON.stringify(updatedIdeas));
+      } catch (e) {
+        console.error("Failed to save new idea to localStorage", e);
+        toast({
+          title: "Storage Error",
+          description: "Could not save your idea locally. It might not appear in the feed immediately.",
+          variant: "destructive",
+        });
+      }
+
+      form.reset();
+      router.push('/'); 
     } else if (!formState.success && formState.message) {
        const generalError = formState.errors?.general?.[0];
        toast({
@@ -102,7 +120,6 @@ export function IdeaForm() {
   }
 
   if (!user) {
-    // This case should ideally be handled by the redirect, but as a fallback:
     return <p>Please log in to submit an idea.</p>;
   }
   
@@ -125,7 +142,6 @@ export function IdeaForm() {
             <input type="hidden" name="userId" value={user.id} />
             <input type="hidden" name="userName" value={user.name || "Anonymous"} />
             {user.avatarUrl && <input type="hidden" name="userAvatarUrl" value={user.avatarUrl} />}
-            {/* Hidden input for tags array, to be compatible with FormData */}
             <input type="hidden" name="tags" value={form.watch('tags').join(',')} />
 
 
@@ -157,8 +173,8 @@ export function IdeaForm() {
                       placeholder="Describe your idea in detail. What problem does it solve? How does it work?"
                       className="min-h-[150px] text-base py-2"
                       {...field}
-                      onChange={handleDescriptionChange} // Use custom handler
-                      value={form.watch('description')} // Ensure value is controlled
+                      onChange={handleDescriptionChange} 
+                      value={form.watch('description')} 
                     />
                   </FormControl>
                   <FormDescription>
@@ -237,4 +253,3 @@ export function IdeaForm() {
     </Card>
   );
 }
-

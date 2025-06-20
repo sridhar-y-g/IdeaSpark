@@ -6,23 +6,26 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, MessageCircle, ExternalLink } from 'lucide-react';
+import { ThumbsUp, MessageCircle, ExternalLink, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
 import React, { useState } from 'react';
 import { ChatbotModal } from './ChatbotModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface IdeaCardProps {
   idea: Idea;
-  index: number; // Added index for priority loading
+  index: number; 
   onUpvote: (ideaId: string) => void;
+  onDeleteRequest: (ideaId: string) => void; // New prop for delete
   style?: React.CSSProperties;
   className?: string; 
 }
 
-export function IdeaCard({ idea, index, onUpvote, style, className }: IdeaCardProps) {
+export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
+  const { user } = useAuth();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [currentUpvotes, setCurrentUpvotes] = useState(idea.upvotes);
 
@@ -47,7 +50,7 @@ export function IdeaCard({ idea, index, onUpvote, style, className }: IdeaCardPr
               fill
               className="object-cover transition-transform duration-300 ease-out group-hover:scale-105"
               data-ai-hint="idea concept"
-              priority={index < 3} // Prioritize loading for the first 3 images
+              priority={index < 3} 
             />
           </div>
         )}
@@ -95,13 +98,26 @@ export function IdeaCard({ idea, index, onUpvote, style, className }: IdeaCardPr
             <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" /> 
             {currentUpvotes}
           </Button>
-          <div className="flex space-x-2">
+          <div className="flex space-x-1 items-center">
+            {user && user.id === idea.userId && (
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => onDeleteRequest(idea.id)} 
+                className="text-destructive/70 hover:text-destructive hover:bg-destructive/10 button-hover-effect"
+                aria-label="Delete idea"
+              >
+                <Trash2 className="h-5 w-5" />
+              </Button>
+            )}
             <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
-              <MessageCircle className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" /> Chat
+              <MessageCircle className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" /> 
+              <span className="hidden sm:inline">Chat</span>
             </Button>
             <Button variant="outline" asChild className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
               <Link href={`/ideas/${idea.id}`}>
-                <ExternalLink className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" /> View
+                <ExternalLink className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" /> 
+                <span className="hidden sm:inline">View</span>
               </Link>
             </Button>
           </div>

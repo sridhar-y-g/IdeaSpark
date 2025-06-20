@@ -7,8 +7,19 @@ import { IdeaCard } from './IdeaCard';
 import { IdeaFilters, type Filters } from './IdeaFilters';
 import { mockIdeas as initialIdeas } from '@/lib/mockData'; 
 import { Button } from '../ui/button';
-import { Loader2, FileQuestion, Sparkles } from 'lucide-react';
+import { Loader2, FileQuestion, Sparkles, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useToast } from '@/hooks/use-toast';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -16,6 +27,7 @@ export function IdeaFeed() {
   const [allIdeas, setAllIdeas] = useState<Idea[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
+  const { toast } = useToast();
 
   const [filters, setFilters] = useState<Filters>({
     searchTerm: '',
@@ -23,23 +35,29 @@ export function IdeaFeed() {
     sortBy: 'recent',
   });
 
+  const [isConfirmDeleteDialogOpen, setIsConfirmDeleteDialogOpen] = useState(false);
+  const [selectedIdeaIdForDeletion, setSelectedIdeaIdForDeletion] = useState<string | null>(null);
+
   useEffect(() => {
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
     let ideasToLoad = initialIdeas;
 
     if (storedIdeasRaw) {
         try {
-            const ideasFromStorage = JSON.parse(storedIdeasRaw);
-            // Basic validation to ensure it's an array
+            const ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
             if (Array.isArray(ideasFromStorage)) {
-                 // Combine mock ideas and stored ideas, prioritizing stored ones or handling updates if IDs match.
-                 // For simplicity, we'll just use stored ideas if they exist, otherwise fallback to mock.
-                 // A more robust solution would merge, update, or de-duplicate.
-                 ideasToLoad = ideasFromStorage.length > 0 ? ideasFromStorage : initialIdeas;
+                 // Combine mock ideas and stored ideas. Prioritize stored ones.
+                 // Filter out mock ideas that are already present (by ID) in storage.
+                 const storedIdeaIds = new Set(ideasFromStorage.map(i => i.id));
+                 const uniqueMockIdeas = initialIdeas.filter(mi => !storedIdeaIds.has(mi.id));
+                 ideasToLoad = [...ideasFromStorage, ...uniqueMockIdeas];
             }
         } catch (e) {
             console.warn("Could not parse ideas from localStorage, falling back to initial mock data.", e);
-            ideasToLoad = initialIdeas; // Fallback if parsing fails
+            // If parsing fails or it's not an array, merge mock ideas carefully
+            const mockIdeaIds = new Set(initialIdeas.map(i => i.id));
+            // Assuming mockIdeas is the base if localStorage is corrupt
+            ideasToLoad = initialIdeas; 
         }
     }
     
@@ -66,6 +84,27 @@ export function IdeaFeed() {
     });
   };
 
+  const requestDeleteIdea = (ideaId: string) => {
+    setSelectedIdeaIdForDeletion(ideaId);
+    setIsConfirmDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!selectedIdeaIdForDeletion) return;
+
+    setAllIdeas(prevIdeas => {
+      const updatedIdeas = prevIdeas.filter(idea => idea.id !== selectedIdeaIdForDeletion);
+      saveIdeasToLocalStorage(updatedIdeas);
+      return updatedIdeas;
+    });
+    toast({
+      title: "Idea Deleted",
+      description: "The idea has been successfully removed.",
+    });
+    setIsConfirmDeleteDialogOpen(false);
+    setSelectedIdeaIdForDeletion(null);
+  };
+
   const filteredAndSortedIdeas = useMemo(() => {
     let ideas = [...allIdeas];
 
@@ -73,6 +112,7 @@ export function IdeaFeed() {
       const searchTermLower = filters.searchTerm.toLowerCase();
       ideas = ideas.filter(idea =>
         idea.title.toLowerCase().includes(searchTermLower) ||
+        idea.description.toLowerCase().includes(searchTermLower) ||
         idea.tags.some(tag => tag.toLowerCase().includes(searchTermLower))
       );
     }
@@ -123,8 +163,9 @@ export function IdeaFeed() {
               <IdeaCard 
                 key={idea.id} 
                 idea={idea} 
-                index={index} // Pass index for priority image loading
+                index={index} 
                 onUpvote={handleUpvote} 
+                onDeleteRequest={requestDeleteIdea}
                 style={{ animationDelay: `${index * 100}ms` }}
                 className="feed-item-staggered"
               />
@@ -152,6 +193,27 @@ export function IdeaFeed() {
           </Button>
         </div>
       )}
+
+      <AlertDialog open={isConfirmDeleteDialogOpen} onOpenChange={setIsConfirmDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the idea.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setSelectedIdeaIdForDeletion(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Yes, delete idea
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
