@@ -63,10 +63,13 @@ export async function submitIdeaAction(
   try {
     const vibrantColors = [
       'E91E63', '4CAF50', 'FFC107', '2196F3', '9C27B0', 'FF5722', '00BCD4', 'F44336',
-      '3F51B5', '009688', 'FF9800', '673AB7', '795548', '607D8B', 'FFEB3B', 'CDDC39'
+      '3F51B5', '009688', 'FF9800', '673AB7', '795548', '607D8B', '2ECC71', '3498DB',
+      'E67E22', '9B59B6', '1ABC9C', 'E74C3C', 'F1C40F', 'D35400'
     ];
     const randomColor = vibrantColors[Math.floor(Math.random() * vibrantColors.length)];
-    const textForPlaceholder = encodeURIComponent(data.title.substring(0,15).trim() || "Idea");
+    const textForPlaceholder = encodeURIComponent(data.title.substring(0,15).trim().replace(/[^a-zA-Z0-9 ]/g, "") || "Idea");
+    const textColor = ['F1C40F', 'FFC107', 'FFEB3B', 'CDDC39'].includes(randomColor) ? '333333' : 'FFFFFF';
+
 
     const newIdea: Idea = {
       id: `idea-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
@@ -79,7 +82,7 @@ export async function submitIdeaAction(
       userAvatarUrl: data.userAvatarUrl,
       createdAt: new Date().toISOString(),
       upvotes: 0,
-      coverImageUrl: `https://placehold.co/600x400/${randomColor}/FFFFFF.png?text=${textForPlaceholder}`
+      coverImageUrl: `https://placehold.co/600x400/${randomColor}/${textColor}.png?text=${textForPlaceholder}`
     };
 
     return { message: "Idea submitted successfully!", success: true, submittedIdea: newIdea };
