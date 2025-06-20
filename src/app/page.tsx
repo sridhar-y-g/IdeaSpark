@@ -4,7 +4,7 @@ import { IdeaFeed } from "@/components/ideas/IdeaFeed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Lightbulb } from "lucide-react";
+import { Sparkles, Lightbulb, RotateCcw } from "lucide-react";
 
 export default function HomePage() {
   return (
