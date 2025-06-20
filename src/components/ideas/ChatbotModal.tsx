@@ -104,8 +104,8 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           </div>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow p-6 min-h-0" ref={scrollAreaRef}> {/* Added min-h-0 here */}
-          <div className="space-y-6 pr-4"> 
+        <ScrollArea className="flex-grow min-h-0 border-b" ref={scrollAreaRef}>
+          <div className="px-6 py-4 space-y-6"> 
             {messages.map(msg => (
               <div key={msg.id} className={cn("flex items-end space-x-3", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
                 {msg.sender === 'bot' && (
@@ -129,8 +129,8 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
               </div>
             ))}
              {isLoading && (
-              <div className="flex items-end space-x-3 justify-start">
-                <Avatar className="h-8 w-8 border-2 border-primary">
+              <div className="flex items-end space-x-3 justify-start pl-11"> {/* Aligned with bot messages approximately */}
+                <Avatar className="h-8 w-8 border-2 border-primary invisible"> {/* Placeholder for alignment */}
                     <AvatarFallback><Bot className="h-4 w-4" /></AvatarFallback>
                 </Avatar>
                 <div className="bg-muted text-muted-foreground rounded-lg px-4 py-3 shadow flex items-center">
@@ -141,7 +141,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           </div>
         </ScrollArea>
 
-        <DialogFooter className="p-6 border-t">
+        <DialogFooter className="p-6 border-t"> {/* Kept p-6 on footer, border-t on ScrollArea is fine */}
           <form
             onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
             className="flex w-full items-center space-x-3"
