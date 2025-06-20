@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -9,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ExternalLink, ArrowLeft } from 'lucide-react';
+import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ExternalLink, ArrowLeft, Download } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { LoadingSpinner } from '@/components/core/LoadingSpinner';
@@ -27,8 +28,6 @@ export default function IdeaDetailPage() {
   useEffect(() => {
     if (ideaId) {
       // Simulate fetching idea details
-      // In a real app, this would be an API call.
-      // For now, try to find it in localStorage first, then mockData
       const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
       let ideasFromStorage: Idea[] = [];
       if (storedIdeasRaw) {
@@ -43,7 +42,6 @@ export default function IdeaDetailPage() {
         setIdea(foundIdea);
         setCurrentUpvotes(foundIdea.upvotes);
       } else {
-        // Handle idea not found, maybe redirect or show error
         console.error("Idea not found");
       }
       setIsLoading(false);
@@ -52,9 +50,7 @@ export default function IdeaDetailPage() {
 
   const handleUpvote = () => {
     if (!idea) return;
-    // Mock upvoting - in real app, call an API
     setCurrentUpvotes(prev => prev + 1);
-    // Update localStorage if idea came from there
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
     if (storedIdeasRaw) {
       let ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
@@ -64,6 +60,42 @@ export default function IdeaDetailPage() {
         localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasFromStorage));
       }
     }
+  };
+
+  const handleDownloadIdea = () => {
+    if (!idea) return;
+
+    const formattedDate = format(new Date(idea.createdAt), 'MMMM d, yyyy');
+    const tagsList = idea.tags.map(tag => `- ${tag}`).join('\n');
+
+    const content = `
+Idea Title: ${idea.title}
+Category: ${idea.category}
+Author: ${idea.userName}
+Published: ${formattedDate}
+Upvotes: ${currentUpvotes}
+
+Description:
+--------------------------------------------------
+${idea.description}
+--------------------------------------------------
+
+Tags:
+--------------------------------------------------
+${tagsList}
+--------------------------------------------------
+    `;
+
+    const blob = new Blob([content.trim()], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    const safeTitle = idea.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    link.download = `idea_${safeTitle.substring(0,30)}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
 
@@ -131,10 +163,15 @@ export default function IdeaDetailPage() {
             </div>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t gap-4">
-            <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group button-hover-effect px-4 py-2">
-              <ThumbsUp className="h-6 w-6 mr-2 group-hover:text-primary transition-colors" /> 
-              {currentUpvotes} Upvotes
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group button-hover-effect px-4 py-2">
+                <ThumbsUp className="h-6 w-6 mr-2 group-hover:text-primary transition-colors" /> 
+                {currentUpvotes} Upvotes
+              </Button>
+              <Button variant="outline" onClick={handleDownloadIdea} className="text-lg button-hover-effect px-4 py-2">
+                <Download className="h-5 w-5 mr-2" /> Download
+              </Button>
+            </div>
             <Button variant="default" onClick={() => setIsChatbotOpen(true)} className="text-lg button-hover-effect px-6 py-3">
               <MessageCircle className="h-6 w-6 mr-2" /> Chat about this Idea
             </Button>
