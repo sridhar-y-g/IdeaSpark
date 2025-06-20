@@ -1,7 +1,7 @@
 
 # IdeaSpark - Ignite Your Creativity
 
-IdeaSpark is a platform to brainstorm, share, and discover innovative concepts. It's built with a modern tech stack and leverages AI to enhance the user experience. This project was developed iteratively in Firebase Studio.
+IdeaSpark is a platform to brainstorm, share, and discover innovative concepts. It's built with a modern tech stack and leverages AI to enhance the user experience.
 
 ## Tech Stack
 
