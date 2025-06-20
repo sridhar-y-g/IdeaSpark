@@ -46,7 +46,7 @@ type IdeaFormValues = z.infer<typeof ideaFormSchema>;
 function SubmitButton() {
   const { pending } = useFormStatus();
   return (
-    <Button type="submit" disabled={pending} className="w-full md:w-auto text-lg py-3 px-8 button-hover-effect">
+    <Button type="submit" disabled={pending} className="w-full md:w-auto text-lg py-3 px-8">
       {pending ? <LoadingSpinner className="mr-2" /> : <Lightbulb className="mr-2 h-5 w-5" />}
       Spark Idea!
     </Button>

@@ -79,7 +79,7 @@ export function IdeaFilters({ filters, onFilterChange, onResetFilters }: IdeaFil
           </Select>
         </div>
         
-        <Button onClick={onResetFilters} variant="outline" className="w-full md:w-auto md:self-end button-hover-effect">
+        <Button onClick={onResetFilters} variant="outline" className="w-full md:w-auto md:self-end">
           <RotateCcw className="h-4 w-4 mr-2" />
           Reset Filters
         </Button>

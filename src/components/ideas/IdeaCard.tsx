@@ -94,7 +94,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
           </div>
         </CardContent>
         <CardFooter className="flex flex-wrap justify-between items-center pt-4 border-t gap-x-2 gap-y-3">
-          <Button variant="ghost" onClick={handleUpvote} className="text-muted-foreground hover:text-primary group button-hover-effect">
+          <Button variant="ghost" onClick={handleUpvote} className="text-muted-foreground hover:text-primary group">
             <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" />
             {currentUpvotes}
           </Button>
@@ -104,17 +104,17 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
                 variant="ghost"
                 size="icon"
                 onClick={() => onDeleteRequest(idea.id)}
-                className="text-destructive/70 hover:text-destructive hover:bg-destructive/10 button-hover-effect"
+                className="text-destructive/70 hover:text-destructive hover:bg-destructive/10"
                 aria-label="Delete idea"
               >
                 <Trash2 className="h-5 w-5" />
               </Button>
             )}
-            <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
+            <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group">
               <MessageCircle className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" />
               <span className="hidden sm:inline">Chat</span>
             </Button>
-            <Button variant="outline" asChild className="text-foreground hover:text-primary hover:border-primary group button-hover-effect">
+            <Button variant="outline" asChild className="text-foreground hover:text-primary hover:border-primary group">
               <Link href={`/ideas/${idea.id}`}>
                 <ExternalLink className="h-5 w-5 mr-1 md:mr-2 group-hover:text-primary transition-colors" />
                 <span className="hidden sm:inline">View</span>

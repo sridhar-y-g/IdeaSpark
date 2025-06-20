@@ -153,7 +153,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
               disabled={isLoading}
               aria-label="Chat input"
             />
-            <Button type="submit" disabled={isLoading || !inputValue.trim()} className="button-hover-effect">
+            <Button type="submit" disabled={isLoading || !inputValue.trim()}>
               {isLoading ? <LoadingSpinner size={20} /> : <Send className="h-5 w-5" />}
               <span className="sr-only">Send message</span>
             </Button>

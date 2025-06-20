@@ -110,7 +110,7 @@ ${tagsList}
   return (
     <MainLayout>
       <div className="py-8 max-w-4xl mx-auto">
-        <Button variant="outline" onClick={() => router.back()} className="mb-6 button-hover-effect">
+        <Button variant="outline" onClick={() => router.back()} className="mb-6">
           <ArrowLeft className="mr-2 h-4 w-4" /> Back to Feed
         </Button>
         <Card className="overflow-hidden shadow-xl">
@@ -164,15 +164,15 @@ ${tagsList}
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t gap-4">
             <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group button-hover-effect px-4 py-2">
+              <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group px-4 py-2">
                 <ThumbsUp className="h-6 w-6 mr-2 group-hover:text-primary transition-colors" /> 
                 {currentUpvotes} Upvotes
               </Button>
-              <Button variant="outline" onClick={handleDownloadIdea} className="text-lg button-hover-effect px-4 py-2">
+              <Button variant="outline" onClick={handleDownloadIdea} className="text-lg px-4 py-2">
                 <Download className="h-5 w-5 mr-2" /> Download
               </Button>
             </div>
-            <Button variant="default" onClick={() => setIsChatbotOpen(true)} className="text-lg button-hover-effect px-6 py-3">
+            <Button variant="default" onClick={() => setIsChatbotOpen(true)} className="text-lg px-6 py-3">
               <MessageCircle className="h-6 w-6 mr-2" /> Chat about this Idea
             </Button>
           </CardFooter>

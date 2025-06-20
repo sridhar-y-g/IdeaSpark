@@ -29,7 +29,7 @@ export function Navbar() {
     { href: '/submit-idea', label: 'Submit Idea', authRequired: true },
   ];
 
-  const commonButtonClasses = "button-hover-effect";
+  const commonButtonClasses = ""; // Removed button-hover-effect
 
   const renderNavLinks = (isMobile: boolean = false) => (
     navLinks.map(link => {

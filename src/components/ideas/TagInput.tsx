@@ -135,7 +135,7 @@ export function TagInput({ value: tags, onChange, descriptionForAISuggestions }:
         <div className="mt-3 p-3 border border-dashed border-primary/50 rounded-md bg-primary/5">
           <div className="flex justify-between items-center mb-2">
             <h4 className="text-sm font-medium text-primary">Suggested Tags:</h4>
-            <Button variant="ghost" size="sm" onClick={handleRefreshSuggestions} disabled={isLoadingSuggestions || !descriptionForAISuggestions} className="button-hover-effect">
+            <Button variant="ghost" size="sm" onClick={handleRefreshSuggestions} disabled={isLoadingSuggestions || !descriptionForAISuggestions}>
               {isLoadingSuggestions ? <LoadingSpinner size={16} /> : <RefreshCw className="h-4 w-4" />}
             </Button>
           </div>
@@ -154,7 +154,7 @@ export function TagInput({ value: tags, onChange, descriptionForAISuggestions }:
                   variant="outline"
                   size="sm"
                   onClick={() => { addTag(tag); setSuggestedTags(st => st.filter(s => s !== tag)); }}
-                  className="text-primary border-primary hover:bg-primary/10 button-hover-effect"
+                  className="text-primary border-primary hover:bg-primary/10"
                 >
                   + {tag}
                 </Button>

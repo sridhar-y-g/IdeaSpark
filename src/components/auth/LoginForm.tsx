@@ -77,7 +77,7 @@ export function LoginForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full button-hover-effect text-lg py-6">
+            <Button type="submit" className="w-full text-lg py-6">
               Log In
             </Button>
           </form>
