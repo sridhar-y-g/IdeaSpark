@@ -141,7 +141,7 @@ ${tagsList}
                 </p>
               </div>
             </div>
-            <CardTitle className="font-headline text-4xl lg:text-5xl text-primary">{idea.title}</CardTitle>
+            <CardTitle className="font-headline text-3xl sm:text-4xl lg:text-5xl text-primary">{idea.title}</CardTitle>
             <CardDescription className="text-lg text-muted-foreground pt-2">
               Category: {idea.category}
             </CardDescription>
