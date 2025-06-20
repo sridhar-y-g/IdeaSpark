@@ -98,23 +98,6 @@ h1, h2, h3, h4, h5, h6 {
 
   .dark body {
     color: hsl(var(--foreground)); 
-    /* The animated space background from previous step might be overridden by the new .large-header logic if it's fixed full screen.
-       Keeping this for now, but the new canvas background will take precedence visually if it covers the body.
-       If the new .large-header is *not* fixed and full-screen, this animated body bg remains.
-       Given the user's new CSS, .large-header is fixed and full-screen, so this body animation is superseded.
-       I will comment it out to prevent conflict and use the new #111 background specified.
-    */
-    /*
-    background: linear-gradient(
-      -45deg, 
-      hsl(240, 25%, 6%),
-      hsl(260, 30%, 10%),
-      hsl(250, 20%, 5%),
-      hsl(270, 28%, 9%)
-    );
-    background-size: 400% 400%;
-    animation: space-bg-animation 35s ease infinite;
-    */
     min-height: 100vh;
   }
 }
@@ -136,11 +119,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
 .animate-slideInUp {
-  animation: slideInUp 0.5s ease-out;
+  animation: slideInUp 0.5s ease-out forwards;
 }
 
 .card-hover-effect {
@@ -201,32 +184,8 @@ h1, h2, h3, h4, h5, h6 {
   display: block;
 }
 
-.main-title { /* User's class name */
-   position: absolute;
-   margin: 0;
-   padding: 0;
-   color: #F9F1E9;
-   text-align: center;
-   top: 50%;
-   left: 50%;
-   -webkit-transform: translate3d(-40%, -30%, 0); /* As per user's specific transform */
-   transform: translate3d(-40%, -30%, 0); /* As per user's specific transform */
-   z-index: 1; /* Above canvas within its container */
-   /* Default font styles will be inherited, .dark .main-title provides specifics */
-}
-
-.dark .main-title { /* Styles specific to .demo .main-title from user, applied in dark mode */
-   text-transform: uppercase;
-   font-size: 4.2em; /* Using a larger base size */
-   letter-spacing: 0.1em; /* Common letter spacing for large titles */
-}
-
-.main-title .thin {
-   font-weight: 200;
-}
+/* .main-title was removed as per user request */
 
 @media only screen and (max-width: 768px) {
-   .dark .main-title {
-      font-size: 3em; /* Adjust size for smaller screens */
-   }
+   /* .main-title styles for mobile were removed as .main-title was removed */
 }
