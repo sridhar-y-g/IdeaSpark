@@ -10,32 +10,41 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
-import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ExternalLink, ArrowLeft, Download } from 'lucide-react';
+import { ThumbsUp, MessageCircle, CalendarDays, UserCircle, Tag, ExternalLink, ArrowLeft, Download, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { LoadingSpinner } from '@/components/core/LoadingSpinner';
 import { ChatbotModal } from '@/components/ideas/ChatbotModal';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 export default function IdeaDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
+  const { toast } = useToast();
   const ideaId = params.id as string;
   const [idea, setIdea] = useState<Idea | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [currentUpvotes, setCurrentUpvotes] = useState(0);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (ideaId) {
-      // Simulate fetching idea details
       const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
       let ideasFromStorage: Idea[] = [];
       if (storedIdeasRaw) {
-        ideasFromStorage = JSON.parse(storedIdeasRaw);
+        try {
+          ideasFromStorage = JSON.parse(storedIdeasRaw);
+        } catch (e) {
+          console.error("Error parsing ideas from localStorage", e);
+          ideasFromStorage = [];
+        }
       }
       
       const allAvailableIdeas = [...ideasFromStorage, ...mockIdeas.filter(mi => !ideasFromStorage.find(si => si.id === mi.id))];
-      
       const foundIdea = allAvailableIdeas.find(i => i.id === ideaId);
       
       if (foundIdea) {
@@ -43,31 +52,93 @@ export default function IdeaDetailPage() {
         setCurrentUpvotes(foundIdea.upvotes);
       } else {
         console.error("Idea not found");
+        // Optionally, redirect or show a 'not found' message more prominently
       }
       setIsLoading(false);
     }
   }, [ideaId]);
 
+  useEffect(() => {
+    if (user && idea) {
+      const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
+      const savedIdeasRaw = localStorage.getItem(savedIdeasKey);
+      if (savedIdeasRaw) {
+        try {
+          const savedIdeaIds: string[] = JSON.parse(savedIdeasRaw);
+          setIsSaved(savedIdeaIds.includes(idea.id));
+        } catch (e) {
+          console.error("Error parsing saved ideas from localStorage", e);
+          setIsSaved(false);
+        }
+      } else {
+        setIsSaved(false);
+      }
+    } else {
+      setIsSaved(false); 
+    }
+  }, [user, idea]);
+
+
   const handleUpvote = () => {
     if (!idea) return;
-    setCurrentUpvotes(prev => prev + 1);
+    const newUpvotes = currentUpvotes + 1;
+    setCurrentUpvotes(newUpvotes);
+    
     const storedIdeasRaw = localStorage.getItem('ideaSparkIdeas');
+    let ideasFromStorage: Idea[] = [];
     if (storedIdeasRaw) {
-      let ideasFromStorage: Idea[] = JSON.parse(storedIdeasRaw);
-      const ideaIndex = ideasFromStorage.findIndex(i => i.id === idea.id);
-      if (ideaIndex !== -1) {
-        ideasFromStorage[ideaIndex].upvotes += 1;
-        localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasFromStorage));
+      try {
+        ideasFromStorage = JSON.parse(storedIdeasRaw);
+      } catch (e) {
+        console.error("Error parsing ideas from localStorage during upvote", e);
+        ideasFromStorage = [];
       }
     }
+
+    const ideaIndex = ideasFromStorage.findIndex(i => i.id === idea.id);
+    if (ideaIndex !== -1) {
+      ideasFromStorage[ideaIndex].upvotes = newUpvotes;
+    } else {
+      // If idea from mockData, add it to localStorage with the new upvote count
+      const ideaToUpdate = mockIdeas.find(mi => mi.id === idea.id);
+      if (ideaToUpdate) {
+        ideasFromStorage.push({ ...ideaToUpdate, upvotes: newUpvotes });
+      }
+    }
+    localStorage.setItem('ideaSparkIdeas', JSON.stringify(ideasFromStorage));
   };
+
+  const handleToggleSave = () => {
+    if (!user || !idea) return;
+    const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
+    let savedIdeaIds: string[] = [];
+    const savedIdeasRaw = localStorage.getItem(savedIdeasKey);
+    if (savedIdeasRaw) {
+      try {
+        savedIdeaIds = JSON.parse(savedIdeasRaw);
+      } catch (e) {
+        console.error("Error parsing saved ideas from localStorage", e);
+        savedIdeaIds = [];
+      }
+    }
+
+    const alreadySaved = savedIdeaIds.includes(idea.id);
+    if (alreadySaved) {
+      savedIdeaIds = savedIdeaIds.filter(id => id !== idea.id);
+      toast({ title: "Idea Unsaved", description: `"${idea.title}" removed from your saved list.` });
+    } else {
+      savedIdeaIds.push(idea.id);
+      toast({ title: "Idea Saved!", description: `"${idea.title}" added to your saved list.` });
+    }
+    localStorage.setItem(savedIdeasKey, JSON.stringify(savedIdeaIds));
+    setIsSaved(!alreadySaved);
+  };
+
 
   const handleDownloadIdea = () => {
     if (!idea) return;
-
     const formattedDate = format(new Date(idea.createdAt), 'MMMM d, yyyy');
     const tagsList = idea.tags.map(tag => `- ${tag}`).join('\n');
-
     const content = `
 Idea Title: ${idea.title}
 Category: ${idea.category}
@@ -85,7 +156,6 @@ Tags:
 ${tagsList}
 --------------------------------------------------
     `;
-
     const blob = new Blob([content.trim()], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -163,17 +233,31 @@ ${tagsList}
             </div>
           </CardContent>
           <CardFooter className="flex flex-col sm:flex-row justify-between items-center pt-6 border-t gap-4">
-            <div className="flex items-center gap-2">
-              <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group px-4 py-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Button variant="ghost" onClick={handleUpvote} className="text-lg text-muted-foreground hover:text-primary group px-3 py-2">
                 <ThumbsUp className="h-6 w-6 mr-2 group-hover:text-primary transition-colors" /> 
-                {currentUpvotes} Upvotes
+                {currentUpvotes}
               </Button>
-              <Button variant="outline" onClick={handleDownloadIdea} className="text-lg px-4 py-2">
+              <Button variant="outline" onClick={handleDownloadIdea} className="text-lg px-3 py-2">
                 <Download className="h-5 w-5 mr-2" /> Download
               </Button>
+               {user && (
+                <Button
+                  variant="outline"
+                  onClick={handleToggleSave}
+                  className={cn(
+                    "text-lg px-3 py-2",
+                    isSaved && "border-primary text-primary hover:bg-primary/10"
+                  )}
+                  aria-label={isSaved ? "Unsave idea" : "Save idea"}
+                >
+                  <Bookmark className={cn("h-5 w-5 mr-2", isSaved && "fill-primary")} />
+                  {isSaved ? 'Saved' : 'Save'}
+                </Button>
+              )}
             </div>
             <Button variant="default" onClick={() => setIsChatbotOpen(true)} className="text-lg px-6 py-3">
-              <MessageCircle className="h-6 w-6 mr-2" /> Chat about this Idea
+              <MessageCircle className="h-6 w-6 mr-2" /> Chat
             </Button>
           </CardFooter>
         </Card>
@@ -188,3 +272,4 @@ ${tagsList}
     </MainLayout>
   );
 }
+

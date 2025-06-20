@@ -6,32 +6,76 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, MessageCircle, ExternalLink, Trash2 } from 'lucide-react';
+import { ThumbsUp, MessageCircle, ExternalLink, Trash2, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import { formatDistanceToNow } from 'date-fns';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChatbotModal } from './ChatbotModal';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 interface IdeaCardProps {
   idea: Idea;
   index: number;
   onUpvote: (ideaId: string) => void;
-  onDeleteRequest: (ideaId: string) => void; // New prop for delete
+  onDeleteRequest: (ideaId: string) => void;
   style?: React.CSSProperties;
   className?: string;
 }
 
 export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
   const { user } = useAuth();
+  const { toast } = useToast();
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [currentUpvotes, setCurrentUpvotes] = useState(idea.upvotes);
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (user && idea) {
+      const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
+      const savedIdeasRaw = localStorage.getItem(savedIdeasKey);
+      if (savedIdeasRaw) {
+        const savedIdeaIds: string[] = JSON.parse(savedIdeasRaw);
+        setIsSaved(savedIdeaIds.includes(idea.id));
+      } else {
+        setIsSaved(false);
+      }
+    } else {
+      setIsSaved(false); // Reset if no user or idea
+    }
+  }, [user, idea]);
 
   const handleUpvote = () => {
     onUpvote(idea.id);
     setCurrentUpvotes(prev => prev + 1);
+  };
+
+  const handleToggleSave = () => {
+    if (!user || !idea) return;
+    const savedIdeasKey = `ideaSparkSavedIdeas_${user.id}`;
+    let savedIdeaIds: string[] = [];
+    const savedIdeasRaw = localStorage.getItem(savedIdeasKey);
+    if (savedIdeasRaw) {
+      try {
+        savedIdeaIds = JSON.parse(savedIdeasRaw);
+      } catch (e) {
+        console.error("Error parsing saved ideas from localStorage", e);
+        savedIdeaIds = [];
+      }
+    }
+
+    const alreadySaved = savedIdeaIds.includes(idea.id);
+    if (alreadySaved) {
+      savedIdeaIds = savedIdeaIds.filter(id => id !== idea.id);
+      toast({ title: "Idea Unsaved", description: `"${idea.title}" removed from your saved list.` });
+    } else {
+      savedIdeaIds.push(idea.id);
+      toast({ title: "Idea Saved!", description: `"${idea.title}" added to your saved list.` });
+    }
+    localStorage.setItem(savedIdeasKey, JSON.stringify(savedIdeaIds));
+    setIsSaved(!alreadySaved);
   };
 
   const timeAgo = formatDistanceToNow(new Date(idea.createdAt), { addSuffix: true });
@@ -108,6 +152,20 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
                 aria-label="Delete idea"
               >
                 <Trash2 className="h-5 w-5" />
+              </Button>
+            )}
+            {user && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleToggleSave}
+                className={cn(
+                  "text-muted-foreground hover:text-primary",
+                  isSaved && "text-primary"
+                )}
+                aria-label={isSaved ? "Unsave idea" : "Save idea"}
+              >
+                <Bookmark className={cn("h-5 w-5", isSaved && "fill-primary")} />
               </Button>
             )}
             <Button variant="outline" onClick={() => setIsChatbotOpen(true)} className="text-foreground hover:text-primary hover:border-primary group">
