@@ -10,6 +10,12 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-headline), sans-serif;
 }
 
+@keyframes space-bg-animation {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
 @layer base {
   :root {
     --background: 240 100% 95%; /* Light Lavender */
@@ -47,7 +53,7 @@ h1, h2, h3, h4, h5, h6 {
     --sidebar-ring: 183 100% 74%;
   }
   .dark {
-    --background: 240 10% 10%; /* Dark Blue/Purple */
+    --background: 240 10% 10%; /* Dark Blue/Purple - This will be overridden for body by the animation */
     --foreground: 240 10% 90%; /* Light Gray */
     --card: 240 10% 15%;
     --card-foreground: 240 10% 90%;
@@ -86,8 +92,25 @@ h1, h2, h3, h4, h5, h6 {
   * {
     @apply border-border;
   }
-  body {
+  body { /* Default (Light mode) body styles */
     @apply bg-background text-foreground;
+    /* font-family is inherited from global body style */
+  }
+
+  /* Animated space background for .dark body */
+  .dark body {
+    color: hsl(var(--foreground)); /* Ensures text color uses dark theme's --foreground */
+    /* font-family is inherited from global body style */
+    background: linear-gradient(
+      -45deg, 
+      hsl(240, 25%, 6%),  /* Deep dark blue */
+      hsl(260, 30%, 10%), /* Dark purple */
+      hsl(250, 20%, 5%),  /* Even darker core */
+      hsl(270, 28%, 9%)   /* Dark violet/blue */
+    );
+    background-size: 400% 400%;
+    animation: space-bg-animation 35s ease infinite;
+    min-height: 100vh; /* Ensure animation covers full viewport height */
   }
 }
 
