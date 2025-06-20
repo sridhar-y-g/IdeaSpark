@@ -93,7 +93,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] p-0 flex flex-col max-h-[90vh]">
+      <DialogContent className="sm:max-w-[600px] p-0 flex flex-col max-h-[90vh] overflow-hidden">
         <DialogHeader className="p-6 pb-4 border-b">
           <div className="flex items-start space-x-3">
              <MessageSquare className="h-8 w-8 text-primary flex-shrink-0"/>
@@ -104,7 +104,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           </div>
         </DialogHeader>
         
-        <ScrollArea className="flex-grow min-h-0 border-b" ref={scrollAreaRef}>
+        <ScrollArea className="flex-grow min-h-0" ref={scrollAreaRef}> {/* Removed border-b from here */}
           <div className="px-6 py-4 space-y-6"> 
             {messages.map(msg => (
               <div key={msg.id} className={cn("flex items-end space-x-3", msg.sender === 'user' ? 'justify-end' : 'justify-start')}>
@@ -141,7 +141,7 @@ export function ChatbotModal({ idea, isOpen, onClose }: ChatbotModalProps) {
           </div>
         </ScrollArea>
 
-        <DialogFooter className="p-6 border-t"> {/* Kept p-6 on footer, border-t on ScrollArea is fine */}
+        <DialogFooter className="p-6 border-t"> 
           <form
             onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }}
             className="flex w-full items-center space-x-3"
