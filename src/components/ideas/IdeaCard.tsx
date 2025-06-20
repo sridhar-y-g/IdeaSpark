@@ -125,7 +125,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
             />
           </div>
         )}
-        <CardHeader className="pb-2">
+        <CardHeader className="pb-3"> {/* Adjusted from pb-2 */}
           <div className="flex items-center space-x-3 mb-3">
             <Avatar className="h-10 w-10 border-2 border-primary">
               <AvatarImage src={idea.userAvatarUrl} alt={idea.userName} data-ai-hint="profile avatar"/>
@@ -136,7 +136,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
               <p className="text-xs text-muted-foreground">{timeAgo}</p>
             </div>
           </div>
-          <CardTitle className="font-headline text-xl sm:text-2xl text-primary hover:text-accent transition-colors">
+          <CardTitle className="font-headline text-2xl text-primary hover:text-accent transition-colors"> {/* Adjusted from text-xl sm:text-2xl */}
             <Link href={`/ideas/${idea.id}`}>{idea.title}</Link>
           </CardTitle>
           <CardDescription className="text-sm text-muted-foreground pt-1">
@@ -144,7 +144,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p className="text-foreground leading-relaxed line-clamp-2 mb-3">
+          <p className="text-foreground leading-relaxed line-clamp-3 mb-3"> {/* Adjusted from line-clamp-2 */}
             {idea.description}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -164,7 +164,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex flex-wrap justify-between items-center pt-3 border-t gap-x-2 gap-y-3">
+        <CardFooter className="flex flex-wrap justify-between items-center pt-4 border-t gap-x-2 gap-y-3"> {/* Adjusted from pt-3 */}
           <Button variant="ghost" onClick={handleUpvote} className="text-muted-foreground hover:text-primary group">
             <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" />
             {currentUpvotes}
