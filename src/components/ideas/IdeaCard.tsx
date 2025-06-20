@@ -23,7 +23,6 @@ interface IdeaCardProps {
   onDeleteRequest: (ideaId: string) => void;
   style?: React.CSSProperties;
   className?: string;
-  // isActiveTrending prop removed
 }
 
 export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, className }: IdeaCardProps) {
@@ -110,7 +109,6 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
       <Card
         className={cn(
             "flex flex-col h-full overflow-hidden shadow-lg card-hover-effect bg-card group",
-            // isActiveTrending class usage removed
             className
           )}
         style={style}
@@ -127,7 +125,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
             />
           </div>
         )}
-        <CardHeader className="pb-3">
+        <CardHeader className="pb-2">
           <div className="flex items-center space-x-3 mb-3">
             <Avatar className="h-10 w-10 border-2 border-primary">
               <AvatarImage src={idea.userAvatarUrl} alt={idea.userName} data-ai-hint="profile avatar"/>
@@ -146,7 +144,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
           </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-          <p className="text-foreground leading-relaxed line-clamp-3 mb-4">
+          <p className="text-foreground leading-relaxed line-clamp-2 mb-3">
             {idea.description}
           </p>
           <div className="flex flex-wrap gap-2">
@@ -166,7 +164,7 @@ export function IdeaCard({ idea, index, onUpvote, onDeleteRequest, style, classN
             )}
           </div>
         </CardContent>
-        <CardFooter className="flex flex-wrap justify-between items-center pt-4 border-t gap-x-2 gap-y-3">
+        <CardFooter className="flex flex-wrap justify-between items-center pt-3 border-t gap-x-2 gap-y-3">
           <Button variant="ghost" onClick={handleUpvote} className="text-muted-foreground hover:text-primary group">
             <ThumbsUp className="h-5 w-5 mr-2 group-hover:text-primary transition-colors" />
             {currentUpvotes}
