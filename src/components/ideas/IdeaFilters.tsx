@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from 'react';
@@ -5,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { IdeaCategory } from '@/lib/types';
-import { Filter, Search, RotateCcw } from 'lucide-react';
+import { Search, RotateCcw } from 'lucide-react'; // Removed Filter icon, added RotateCcw
 
 export interface Filters {
   searchTerm: string;
@@ -16,7 +17,7 @@ export interface Filters {
 interface IdeaFiltersProps {
   filters: Filters;
   onFilterChange: (newFilters: Filters) => void;
-  onResetFilters: () => void;
+  onResetFilters: () => void; // New prop for reset
 }
 
 export function IdeaFilters({ filters, onFilterChange, onResetFilters }: IdeaFiltersProps) {
