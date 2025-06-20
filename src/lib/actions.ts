@@ -6,6 +6,7 @@ import { IdeaCategory } from './types'; // Add this import
 import { z } from 'zod';
 import { suggestTags as aiSuggestTags, type SuggestTagsInput, type SuggestTagsOutput } from '@/ai/flows/suggest-tags';
 import { ideaChatbot as aiIdeaChatbot, type IdeaChatbotInput, type IdeaChatbotOutput } from '@/ai/flows/idea-chatbot';
+import { generateHeroImage as aiGenerateHeroImage, type GenerateHeroImageInput, type GenerateHeroImageOutput } from '@/ai/flows/generate-hero-image-flow';
 
 
 const ideaFormSchema = z.object({
@@ -88,4 +89,13 @@ export async function suggestTagsAction(input: SuggestTagsInput): Promise<Sugges
 
 export async function ideaChatbotAction(input: IdeaChatbotInput): Promise<IdeaChatbotOutput> {
   return aiIdeaChatbot(input);
+}
+
+export async function generateHeroImageAction(input?: GenerateHeroImageInput): Promise<GenerateHeroImageOutput | { error: string }> {
+  try {
+    return await aiGenerateHeroImage(input);
+  } catch (error) {
+    console.error("Server action error generating hero image:", error);
+    return { error: "Failed to generate hero image. Please try again later." };
+  }
 }

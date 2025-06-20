@@ -1,12 +1,51 @@
 
+"use client"; // This page now uses client-side hooks for dynamic image generation
+
 import { MainLayout } from "@/components/layout/MainLayout";
 import { IdeaFeed } from "@/components/ideas/IdeaFeed";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles, Lightbulb, RotateCcw } from "lucide-react";
+import { Sparkles, Lightbulb } from "lucide-react"; // Removed RotateCcw as it's not used
+import React, { useState, useEffect } from 'react';
+import { generateHeroImageAction } from '@/lib/actions';
+import { useToast } from "@/hooks/use-toast";
+
+const STATIC_HERO_IMAGE_URL = "https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png";
+const STATIC_HERO_IMAGE_ALT = "Inspiring visual for IdeaSpark"; // More generic alt text
 
 export default function HomePage() {
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchHeroImage = async () => {
+      try {
+        const result = await generateHeroImageAction();
+        if ('imageDataUri' in result && result.imageDataUri) {
+          setHeroImageUrl(result.imageDataUri);
+        } else if ('error' in result) {
+          console.warn("Failed to generate hero image:", result.error);
+          // Optionally, show a toast, but for hero, failing silently and showing static is okay.
+          // toast({
+          //   title: "Hero Image Update",
+          //   description: "Could not generate a new hero image, displaying default.",
+          //   variant: "default", 
+          // });
+        }
+      } catch (error) {
+        console.error("Error calling generateHeroImageAction:", error);
+        // toast({
+        //   title: "Error",
+        //   description: "An unexpected error occurred while trying to generate the hero image.",
+        //   variant: "destructive",
+        // });
+      }
+    };
+
+    fetchHeroImage();
+  }, [toast]);
+
   return (
     <MainLayout>
       {/* Hero Section */}
@@ -40,13 +79,14 @@ export default function HomePage() {
             
             <div className="flex justify-center">
               <Image
-                src="https://firestuff.storage.googleapis.com/misc/12867145969088238000-8472467075420925000.png"
-                alt="Diverse team collaborating on ideas"
+                src={heroImageUrl || STATIC_HERO_IMAGE_URL}
+                alt={STATIC_HERO_IMAGE_ALT}
                 width={600}
                 height={450}
                 className="rounded-xl shadow-2xl"
-                data-ai-hint="collaboration team"
-                priority
+                data-ai-hint="abstract ideas" // Generic hint for AI generated or static
+                priority // Important for LCP
+                key={heroImageUrl || STATIC_HERO_IMAGE_URL} // Add key to force re-render on src change
               />
             </div>
           </div>
